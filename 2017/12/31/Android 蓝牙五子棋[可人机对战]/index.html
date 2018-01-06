@@ -1,0 +1,1000 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="蓝牙五子棋," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言我之前做了个人机对战的五子棋, AI算法很垃圾, 然后各种逻辑很糟糕, 已经很久没有维护了, 今天看了篇文章, 是用了蓝牙和Wifi的五子棋对战, 我觉得很有意思, 毕竟自己没做过蓝牙连接这方面的项目, 然后我就把以前做的五子棋搬了出来.">
+<meta name="keywords" content="蓝牙五子棋">
+<meta property="og:type" content="article">
+<meta property="og:title" content="蓝牙五子棋[可人机对战]">
+<meta property="og:url" content="https://thatnight.github.io/2017/12/31/Android 蓝牙五子棋[可人机对战]/index.html">
+<meta property="og:site_name" content="ThatNight&#39;s Blog">
+<meta property="og:description" content="前言我之前做了个人机对战的五子棋, AI算法很垃圾, 然后各种逻辑很糟糕, 已经很久没有维护了, 今天看了篇文章, 是用了蓝牙和Wifi的五子棋对战, 我觉得很有意思, 毕竟自己没做过蓝牙连接这方面的项目, 然后我就把以前做的五子棋搬了出来.">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20170407150037619?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:image" content="http://img.blog.csdn.net/20170407153803201?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2018-01-06T13:10:47.280Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="蓝牙五子棋[可人机对战]">
+<meta name="twitter:description" content="前言我之前做了个人机对战的五子棋, AI算法很垃圾, 然后各种逻辑很糟糕, 已经很久没有维护了, 今天看了篇文章, 是用了蓝牙和Wifi的五子棋对战, 我觉得很有意思, 毕竟自己没做过蓝牙连接这方面的项目, 然后我就把以前做的五子棋搬了出来.">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20170407150037619?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://thatnight.github.io/2017/12/31/Android 蓝牙五子棋[可人机对战]/"/>
+
+
+
+
+
+  <title>蓝牙五子棋[可人机对战] | ThatNight's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?74f1a8bbc0e841e49924177b36e02d9a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ThatNight's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">那时候坚持不懈的我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://thatnight.github.io/2017/12/31/Android 蓝牙五子棋[可人机对战]/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ThatNight">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ThatNight's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">蓝牙五子棋[可人机对战]</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-31T20:19:51+08:00">
+                2017-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/个人项目/" itemprop="url" rel="index">
+                    <span itemprop="name">个人项目</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/31/Android 蓝牙五子棋[可人机对战]/" class="leancloud_visitors" data-flag-title="蓝牙五子棋[可人机对战]">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>我之前做了个人机对战的五子棋, AI算法很垃圾, 然后各种逻辑很糟糕, 已经很久没有维护了, 今天看了篇文章, 是用了蓝牙和Wifi的五子棋对战, 我觉得很有意思, 毕竟自己没做过蓝牙连接这方面的项目, 然后我就把以前做的五子棋搬了出来.</p>
+<a id="more"></a>
+<hr>
+<h1 id="蓝牙的基础知识"><a href="#蓝牙的基础知识" class="headerlink" title="蓝牙的基础知识"></a>蓝牙的基础知识</h1><p>我在前面就有写过一篇比较详细的文章, 兄弟们可以到前面看一看, <a href="http://blog.csdn.net/williamchew/article/details/68925920" target="_blank" rel="noopener">Android 蓝牙五子棋[可人机对战] —— 蓝牙通信篇</a></p>
+<hr>
+<h1 id="项目解析"><a href="#项目解析" class="headerlink" title="项目解析"></a>项目解析</h1><ul>
+<li><h2 id="文件结构"><a href="#文件结构" class="headerlink" title="文件结构"></a>文件结构</h2><p><img src="http://img.blog.csdn.net/20170407150037619?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+</li>
+<li><h2 id="人机对战算法"><a href="#人机对战算法" class="headerlink" title="人机对战算法"></a>人机对战算法</h2><p>  这个算法呢, 就是一个朋友写的, 使用了<strong>博弈树</strong>来进行判断对战, 其实原理很简单: <strong>通过计算各个点的权重</strong>.<br>  有兴趣的朋友可以下载项目来研究下,这个算法不是很好,计算得比较慢, 一共写了6棵树, 我这里只用了2,3,4, 所以比较快.哪天有空,我也来研究一下ai算法.</p>
+</li>
+<li><h2 id="主要的模块"><a href="#主要的模块" class="headerlink" title="主要的模块"></a>主要的模块</h2><ul>
+<li><h3 id="蓝牙游戏模块"><a href="#蓝牙游戏模块" class="headerlink" title="蓝牙游戏模块"></a>蓝牙游戏模块</h3><p>  BleGameActivity.java</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br></pre></td><td class="code"><pre><span class="line">public class BleGameActivity extends Activity implements PeopleGameView.onBluetoothListener &#123;</span><br><span class="line"></span><br><span class="line">    @InjectView(R.id.tv_pgv_win)</span><br><span class="line">    TextView mIsWin;</span><br><span class="line">    @InjectView(R.id.view_pgv)</span><br><span class="line">    PeopleGameView mPeopleGameView;</span><br><span class="line">    @InjectView(R.id.btn_pgv_return)</span><br><span class="line">    Button mBtnPgvReturn;</span><br><span class="line">    @InjectView(R.id.btn_pgv_again)</span><br><span class="line">    Button mBtnPgvAgain;</span><br><span class="line">    @InjectView(R.id.btn_pgv_msg)</span><br><span class="line">    Button mBtnPgvMsg;</span><br><span class="line">    private ConnectedThread mConnectedThread;</span><br><span class="line">    private BluetoothSocket mSocket;</span><br><span class="line">    private ListPopupWindow mWindowCompat;</span><br><span class="line">    private List&lt;String&gt; mMessage;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,</span><br><span class="line">                WindowManager.LayoutParams.FLAG_FULLSCREEN);</span><br><span class="line">        setContentView(R.layout.activity_ble_game);</span><br><span class="line">        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_NAVIGATION);</span><br><span class="line">        getWindow().addFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);</span><br><span class="line">        ButterKnife.inject(this);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //初始化</span><br><span class="line">    private void init() &#123;</span><br><span class="line">        String[] message = getResources().getStringArray(R.array.array_message);</span><br><span class="line">        mMessage = Arrays.asList(message);</span><br><span class="line"></span><br><span class="line">        mPeopleGameView.setTextView(mIsWin);</span><br><span class="line">        mPeopleGameView.setCallBack(this);</span><br><span class="line"></span><br><span class="line">        //获取信息</span><br><span class="line">        Intent intent = getIntent();</span><br><span class="line">        String adress = intent.getStringExtra(&quot;adress&quot;);</span><br><span class="line">        boolean isStart = intent.getBooleanExtra(&quot;isStart&quot;, false);</span><br><span class="line">        if (adress != null) &#123;</span><br><span class="line">            mSocket = SocketManager.getmBleSocketHm(adress);</span><br><span class="line">            manageClientSocket(isStart);</span><br><span class="line">            mPeopleGameView.setAdress(adress);</span><br><span class="line">            mPeopleGameView.setIsStart(isStart);</span><br><span class="line">        &#125;</span><br><span class="line">        popupWindow();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //开启连接线程</span><br><span class="line">    public void manageClientSocket(boolean isStart) &#123;</span><br><span class="line">        mConnectedThread = new ConnectedThread(mSocket, mPeopleGameView, isStart);</span><br><span class="line">        mConnectedThread.start();</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //发送信息</span><br><span class="line">    @Override</span><br><span class="line">    public void onCommand(String temp) &#123;</span><br><span class="line">        mConnectedThread.write(temp.getBytes());</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @OnClick(&#123;R.id.btn_pgv_return, R.id.btn_pgv_again, R.id.btn_pgv_msg&#125;)</span><br><span class="line">    public void onClick(View view) &#123;</span><br><span class="line">        switch (view.getId()) &#123;</span><br><span class="line">            case R.id.btn_pgv_msg:</span><br><span class="line">                mWindowCompat.show();</span><br><span class="line">                break;</span><br><span class="line">            case R.id.btn_pgv_return:</span><br><span class="line">                String command = &quot;return&quot;;</span><br><span class="line">                mConnectedThread.write(command.getBytes());</span><br><span class="line">                mPeopleGameView.returnUp();</span><br><span class="line">                break;</span><br><span class="line">            case R.id.btn_pgv_again:</span><br><span class="line">                String restartCommand = &quot;restart&quot;;</span><br><span class="line">                mConnectedThread.write(restartCommand.getBytes());</span><br><span class="line">                mPeopleGameView.restartGame();</span><br><span class="line">                break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    //弹出快捷回复窗口</span><br><span class="line">    private void popupWindow() &#123;</span><br><span class="line">        mWindowCompat = new ListPopupWindow(this);</span><br><span class="line">        mWindowCompat.setAdapter(new ArrayAdapter&lt;String&gt;(this, android.R.layout.simple_list_item_1, mMessage));</span><br><span class="line">        mWindowCompat.setWidth(ViewGroup.LayoutParams.MATCH_PARENT);</span><br><span class="line">        mWindowCompat.setHeight(ViewGroup.LayoutParams.WRAP_CONTENT);</span><br><span class="line">        mWindowCompat.setAnchorView(mBtnPgvMsg);</span><br><span class="line">        mWindowCompat.setModal(true);</span><br><span class="line">        mWindowCompat.setOnItemClickListener(new AdapterView.OnItemClickListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onItemClick(AdapterView&lt;?&gt; parent, View view, int position, long id) &#123;</span><br><span class="line">                String msg = &quot;msg;&quot; + mMessage.get(position);</span><br><span class="line">                mConnectedThread.write(msg.getBytes());</span><br><span class="line">                mWindowCompat.dismiss();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDestroy() &#123;</span><br><span class="line">        super.onDestroy();</span><br><span class="line">        mConnectedThread.cancel();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  PeopleGameView.java</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br><span class="line">230</span><br><span class="line">231</span><br><span class="line">232</span><br><span class="line">233</span><br><span class="line">234</span><br><span class="line">235</span><br><span class="line">236</span><br><span class="line">237</span><br><span class="line">238</span><br><span class="line">239</span><br><span class="line">240</span><br><span class="line">241</span><br><span class="line">242</span><br><span class="line">243</span><br><span class="line">244</span><br><span class="line">245</span><br><span class="line">246</span><br><span class="line">247</span><br><span class="line">248</span><br><span class="line">249</span><br><span class="line">250</span><br><span class="line">251</span><br><span class="line">252</span><br><span class="line">253</span><br><span class="line">254</span><br><span class="line">255</span><br><span class="line">256</span><br><span class="line">257</span><br><span class="line">258</span><br><span class="line">259</span><br><span class="line">260</span><br><span class="line">261</span><br><span class="line">262</span><br><span class="line">263</span><br><span class="line">264</span><br><span class="line">265</span><br><span class="line">266</span><br><span class="line">267</span><br><span class="line">268</span><br><span class="line">269</span><br><span class="line">270</span><br><span class="line">271</span><br><span class="line">272</span><br><span class="line">273</span><br><span class="line">274</span><br><span class="line">275</span><br><span class="line">276</span><br><span class="line">277</span><br><span class="line">278</span><br><span class="line">279</span><br><span class="line">280</span><br><span class="line">281</span><br><span class="line">282</span><br><span class="line">283</span><br><span class="line">284</span><br><span class="line">285</span><br><span class="line">286</span><br><span class="line">287</span><br><span class="line">288</span><br><span class="line">289</span><br><span class="line">290</span><br><span class="line">291</span><br><span class="line">292</span><br><span class="line">293</span><br><span class="line">294</span><br><span class="line">295</span><br><span class="line">296</span><br><span class="line">297</span><br><span class="line">298</span><br><span class="line">299</span><br><span class="line">300</span><br><span class="line">301</span><br><span class="line">302</span><br><span class="line">303</span><br><span class="line">304</span><br><span class="line">305</span><br><span class="line">306</span><br><span class="line">307</span><br><span class="line">308</span><br><span class="line">309</span><br><span class="line">310</span><br><span class="line">311</span><br><span class="line">312</span><br><span class="line">313</span><br><span class="line">314</span><br><span class="line">315</span><br><span class="line">316</span><br><span class="line">317</span><br><span class="line">318</span><br></pre></td><td class="code"><pre><span class="line">public class PeopleGameView extends View &#123;</span><br><span class="line">    private Paint mPaint;</span><br><span class="line">    private int mPanelWidth;                             //画布宽度</span><br><span class="line">    private int mChessFlag = 0;                          //记录上一次下棋颜色，1为黑色，2为白色，0为刚开始</span><br><span class="line">    private static final int CHESS_BLACK = 1;</span><br><span class="line">    private static final int CHESS_WHITE = 2;</span><br><span class="line">    private static final int MAX_LINE = 15;             //最大行数</span><br><span class="line">    private static final float SIZE = 3 * 1.0f / 4;     //棋子的大小为棋盘格子的3/4</span><br><span class="line">    private float mSingleHeight;                         //格子高度</span><br><span class="line">    public boolean isWin = false;                       //是否已出结果</span><br><span class="line">    private boolean isMe = false;                       //谁先出手</span><br><span class="line">    private boolean isStart = false;                    //谁先开始</span><br><span class="line">    private int[][] mChess;                              //棋盘</span><br><span class="line">    private Stack&lt;String&gt; mChessArray;                   //悔棋的栈</span><br><span class="line">    private BleGameActivity mBleGameActivity;</span><br><span class="line">    private String mAdress;</span><br><span class="line">    private int mUpChessX;                              //上一个下的棋子x,y</span><br><span class="line">    private int mUpChessY;</span><br><span class="line">    private TextView mTvWin;                            //输赢的TextView</span><br><span class="line"></span><br><span class="line">    public PeopleGameView(Context context, @Nullable AttributeSet attrs) &#123;</span><br><span class="line">        super(context, attrs);</span><br><span class="line">        init();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //初始化</span><br><span class="line">    private void init() &#123;</span><br><span class="line">        isWin = false;</span><br><span class="line">        mUpChessX = mUpChessY = -1;</span><br><span class="line">        mChess = new int[MAX_LINE][MAX_LINE];</span><br><span class="line">        mChessArray = new Stack&lt;&gt;();</span><br><span class="line">        mPaint = new Paint();</span><br><span class="line">        mPaint.setColor(Color.BLACK);</span><br><span class="line">        mPaint.setAntiAlias(true);</span><br><span class="line">        mPaint.setDither(true);</span><br><span class="line">        mPaint.setStyle(Paint.Style.FILL);</span><br><span class="line">        isMe = isStart;</span><br><span class="line">        if (isStart) &#123;</span><br><span class="line">            mChessFlag = CHESS_WHITE;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) &#123;</span><br><span class="line">        int widthSize = MeasureSpec.getSize(widthMeasureSpec);</span><br><span class="line">        int widthMode = MeasureSpec.getMode(widthMeasureSpec);</span><br><span class="line">        int heightSize = MeasureSpec.getSize(heightMeasureSpec);</span><br><span class="line">        int heightMode = MeasureSpec.getMode(heightMeasureSpec);</span><br><span class="line">        int width = Math.min(widthSize, heightSize);</span><br><span class="line">        if (widthMode == MeasureSpec.UNSPECIFIED) &#123;</span><br><span class="line">            width = heightSize;</span><br><span class="line">        &#125; else if (heightMode == MeasureSpec.UNSPECIFIED) &#123;</span><br><span class="line">            width = widthSize;</span><br><span class="line">        &#125;</span><br><span class="line">        mPanelWidth = width;</span><br><span class="line">        mSingleHeight = mPanelWidth * 1.0f / MAX_LINE;</span><br><span class="line">        setMeasuredDimension(width, width);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onSizeChanged(int w, int h, int oldw, int oldh) &#123;</span><br><span class="line">        super.onSizeChanged(w, h, oldw, oldh);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDraw(Canvas canvas) &#123;</span><br><span class="line">        drawBoard(canvas);</span><br><span class="line">        drawPiece(canvas);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 画棋盘</span><br><span class="line">     *</span><br><span class="line">     * @param canvas</span><br><span class="line">     */</span><br><span class="line">    private void drawBoard(Canvas canvas) &#123;</span><br><span class="line">        mPaint.setColor(Color.BLACK);</span><br><span class="line">        for (int i = 0; i &lt; MAX_LINE; i++) &#123;</span><br><span class="line">            canvas.drawLine(mSingleHeight / 2, mSingleHeight / 2 + i * mSingleHeight, mSingleHeight / 2 + (MAX_LINE - 1) * mSingleHeight, mSingleHeight / 2 + i * mSingleHeight, mPaint);</span><br><span class="line">            canvas.drawLine(mSingleHeight / 2 + i * mSingleHeight, mSingleHeight / 2, mSingleHeight / 2 + i * mSingleHeight, mSingleHeight / 2 + (MAX_LINE - 1) * mSingleHeight, mPaint);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    /**</span><br><span class="line">     * 画棋子</span><br><span class="line">     *</span><br><span class="line">     * @param canvas</span><br><span class="line">     */</span><br><span class="line">    private void drawPiece(Canvas canvas) &#123;</span><br><span class="line">        int side = 0;</span><br><span class="line">        if ((side = isWin(mChess)) != 0) &#123;</span><br><span class="line">            mTvWin.setVisibility(View.VISIBLE);</span><br><span class="line">            if (side == CHESS_BLACK) &#123;</span><br><span class="line">                mBleGameActivity.onCommand(&quot;black_win&quot;);</span><br><span class="line">                mTvWin.setText(&quot;黑棋胜利!&quot;);</span><br><span class="line">            &#125; else if (side == CHESS_WHITE) &#123;</span><br><span class="line">                mBleGameActivity.onCommand(&quot;white_win&quot;);</span><br><span class="line">                mTvWin.setText(&quot;白棋胜利!&quot;);</span><br><span class="line">            &#125;</span><br><span class="line">            mChessFlag = 0;</span><br><span class="line">            isWin = true;</span><br><span class="line">        &#125;</span><br><span class="line">        for (int i = 0; i &lt; MAX_LINE; i++) &#123;</span><br><span class="line">            for (int j = 0; j &lt; MAX_LINE; j++) &#123;</span><br><span class="line">                if (mChess[i][j] == CHESS_BLACK) &#123;</span><br><span class="line">                    mPaint.setColor(Color.BLACK);</span><br><span class="line">                    canvas.drawCircle(mSingleHeight / 2 + i * mSingleHeight, mSingleHeight / 2 + j * mSingleHeight, mSingleHeight / 2 - 5, mPaint);</span><br><span class="line">                &#125;</span><br><span class="line">                if (mChess[i][j] == CHESS_WHITE) &#123;</span><br><span class="line">                    mPaint.setColor(Color.WHITE);</span><br><span class="line">                    canvas.drawCircle(mSingleHeight / 2 + i * mSingleHeight, mSingleHeight / 2 + j * mSingleHeight, mSingleHeight / 2 - 5, mPaint);</span><br><span class="line">                &#125;</span><br><span class="line">                //画上一个棋子的圆环</span><br><span class="line">                if (i == mUpChessX &amp;&amp; j == mUpChessY) &#123;</span><br><span class="line">                    mPaint.setColor(Color.RED);</span><br><span class="line">                    mPaint.setStyle(Paint.Style.STROKE);</span><br><span class="line">                    mPaint.setStrokeWidth(4);</span><br><span class="line">                    canvas.drawCircle(mSingleHeight / 2 + i * mSingleHeight, mSingleHeight / 2 + j * mSingleHeight, mSingleHeight / 2 - 2, mPaint);</span><br><span class="line">                    mPaint.setStyle(Paint.Style.FILL);</span><br><span class="line">                    mPaint.setStrokeWidth(0);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //下棋子,并发送给对方</span><br><span class="line">    private void putChess(int x, int y, int chessFlag) &#123;</span><br><span class="line">        mChess[x][y] = chessFlag;</span><br><span class="line">        String command = &quot;&quot;;</span><br><span class="line">        String temp = x + &quot;;&quot; + y + &quot;;&quot; + chessFlag;</span><br><span class="line">        mChessArray.push(temp);</span><br><span class="line">        command += mAdress + &quot;;&quot; + temp;</span><br><span class="line">        mBleGameActivity.onCommand(command + &quot;;&quot; + chessFlag);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //接收对方传送信息</span><br><span class="line">    public void getCommand(String command) &#123;</span><br><span class="line">        if (&quot;msg;&quot;.equals(command.substring(0, 4))) &#123;</span><br><span class="line">            String finalCommand = command.substring(4);</span><br><span class="line">            Toast.makeText(mBleGameActivity, finalCommand, Toast.LENGTH_SHORT).show();</span><br><span class="line">        &#125; else if (&quot;white_win&quot;.equals(command)) &#123;</span><br><span class="line">            mTvWin.setText(&quot;白棋胜利!&quot;);</span><br><span class="line">        &#125; else if (&quot;black_win&quot;.equals(command)) &#123;</span><br><span class="line">            mTvWin.setText(&quot;黑棋胜利!&quot;);</span><br><span class="line">        &#125; else if (&quot;return&quot;.equals(command)) &#123;</span><br><span class="line">            Toast.makeText(mBleGameActivity, &quot;对方悔棋!&quot;, Toast.LENGTH_SHORT).show();</span><br><span class="line">            returnUp();</span><br><span class="line">        &#125; else if (&quot;restart&quot;.equals(command)) &#123;</span><br><span class="line">            Toast.makeText(mBleGameActivity, &quot;对方重玩游戏!&quot;, Toast.LENGTH_SHORT).show();</span><br><span class="line">            restartGame();</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            isMe = false;</span><br><span class="line">            String[] data = command.split(&quot;;&quot;);</span><br><span class="line">            int x = Integer.parseInt(data[1]);</span><br><span class="line">            int y = Integer.parseInt(data[2]);</span><br><span class="line">            int flag = Integer.parseInt(data[3]);</span><br><span class="line">            mUpChessX = x;</span><br><span class="line">            mUpChessY = y;</span><br><span class="line">            mChess[x][y] = flag;</span><br><span class="line">            mChessFlag = flag;</span><br><span class="line">            String temp = x + &quot;;&quot; + y + &quot;;&quot; + flag;</span><br><span class="line">            mChessArray.push(temp);</span><br><span class="line">            invalidate();</span><br><span class="line">            isMe = true;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //下棋触摸事件</span><br><span class="line">    @Override</span><br><span class="line">    public boolean onTouchEvent(MotionEvent event) &#123;</span><br><span class="line">        if (event.getAction() == MotionEvent.ACTION_UP) &#123;</span><br><span class="line">            if (!isWin) &#123;</span><br><span class="line">                int x = (int) event.getX();</span><br><span class="line">                int y = (int) event.getY();</span><br><span class="line">                if (x &lt; -mSingleHeight / 2 || x &gt; mPanelWidth - mSingleHeight / 2 || y &lt; 0 || y &gt; mPanelWidth - mSingleHeight / 2) &#123;</span><br><span class="line"></span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    int indexX = (int) (x / mSingleHeight);</span><br><span class="line">                    int indexY = (int) (y / mSingleHeight);</span><br><span class="line">                    mUpChessX = indexX;</span><br><span class="line">                    mUpChessY = indexY;</span><br><span class="line">                    if (mChessFlag == CHESS_WHITE &amp;&amp; isMe &amp;&amp; mChess[indexX][indexY] == 0) &#123;</span><br><span class="line">                        putChess(indexX, indexY, CHESS_BLACK);</span><br><span class="line">                        mChessFlag = CHESS_BLACK;</span><br><span class="line">                        isMe = false;</span><br><span class="line">                        invalidate();</span><br><span class="line">                    &#125; else if (mChessFlag == CHESS_BLACK &amp;&amp; isMe &amp;&amp; mChess[indexX][indexY] == 0) &#123;</span><br><span class="line">                        putChess(indexX, indexY, CHESS_WHITE);</span><br><span class="line">                        mChessFlag = CHESS_WHITE;</span><br><span class="line">                        isMe = false;</span><br><span class="line">                        invalidate();</span><br><span class="line">                    &#125;</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return true;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //判断是否已有结果</span><br><span class="line">    public int isWin(int[][] chess) &#123;</span><br><span class="line">        for (int i = 0; i &lt; 15; i++) &#123;</span><br><span class="line">            for (int j = 0; j &lt; 15; j++) &#123;</span><br><span class="line">                int side = chess[i][j];</span><br><span class="line">                if (side == 0)</span><br><span class="line">                    continue;</span><br><span class="line">                for (int k = 0; k &lt; 5; k++) &#123;</span><br><span class="line">                    //check from vertical</span><br><span class="line">                    if ((i - k &gt;= 0 &amp;&amp; i + 4 - k &lt; 15) &amp;&amp;</span><br><span class="line">                            (chess[i - k][j] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 1 - k][j] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 2 - k][j] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 3 - k][j] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 4 - k][j] == side)) &#123;</span><br><span class="line">                        return side;</span><br><span class="line">                    &#125;</span><br><span class="line">                    //check from horizontal</span><br><span class="line">                    if ((j - k &gt;= 0 &amp;&amp; j + 4 - k &lt; 15) &amp;&amp;</span><br><span class="line">                            (chess[i][j - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i][j + 1 - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i][j + 2 - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i][j + 3 - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i][j + 4 - k] == side)) &#123;</span><br><span class="line">                        return side;</span><br><span class="line">                    &#125;</span><br><span class="line">                    //check from leftbevel</span><br><span class="line">                    if ((i - k &gt;= 0 &amp;&amp; j - k &gt;= 0 &amp;&amp; i + 4 - k &lt; 15 &amp;&amp; j + 4 - k &lt; 15) &amp;&amp;</span><br><span class="line">                            (chess[i - k][j - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 1 - k][j + 1 - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 2 - k][j + 2 - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 3 - k][j + 3 - k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 4 - k][j + 4 - k] == side)) &#123;</span><br><span class="line">                        return side;</span><br><span class="line">                    &#125;</span><br><span class="line">                    //check from rightbevel</span><br><span class="line">                    if ((i - k &gt;= 0 &amp;&amp; j + k &lt; 15 &amp;&amp; i + 4 - k &lt; 15 &amp;&amp; j - 4 + k &gt;= 0) &amp;&amp;</span><br><span class="line">                            (chess[i - k][j + k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 1 - k][j - 1 + k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 2 - k][j - 2 + k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 3 - k][j - 3 + k] == side &amp;&amp;</span><br><span class="line">                                    chess[i + 4 - k][j - 4 + k] == side)) &#123;</span><br><span class="line">                        return side;</span><br><span class="line">                    &#125;</span><br><span class="line"></span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return 0;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setCallBack(BleGameActivity bleGameActivity) &#123;</span><br><span class="line">        this.mBleGameActivity = bleGameActivity;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setIsStart(boolean isStart) &#123;</span><br><span class="line">        this.isStart = isStart;</span><br><span class="line">        isMe = isStart;</span><br><span class="line">        if (isStart) &#123;</span><br><span class="line">            mChessFlag = CHESS_WHITE;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAdress(String adress) &#123;</span><br><span class="line">        mAdress = adress;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //重新开始</span><br><span class="line">    public void restartGame() &#123;</span><br><span class="line">        mTvWin.setVisibility(View.INVISIBLE);</span><br><span class="line">        init();</span><br><span class="line">        invalidate();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //悔棋</span><br><span class="line">    public void returnUp() &#123;</span><br><span class="line">        if (!isWin) &#123;</span><br><span class="line">            if (mChessArray.size() == 0) &#123;</span><br><span class="line"></span><br><span class="line">            &#125; else &#123;</span><br><span class="line">                String[] point = mChessArray.pop().split(&quot;;&quot;);</span><br><span class="line">                int x = Integer.parseInt(point[0]);</span><br><span class="line">                int y = Integer.parseInt(point[1]);</span><br><span class="line">                int flag = Integer.parseInt(point[2]);</span><br><span class="line">                mChess[x][y] = 0;</span><br><span class="line">                if (mChessArray.size() == 0) &#123;</span><br><span class="line">                    isMe = isStart;</span><br><span class="line">                    mChessFlag = CHESS_WHITE;</span><br><span class="line">                    mUpChessX = -1;</span><br><span class="line">                    mUpChessY = -1;</span><br><span class="line">                &#125; else &#123;</span><br><span class="line">                    String[] upChess = mChessArray.get(mChessArray.size() - 1).split(&quot;;&quot;);</span><br><span class="line">                    mUpChessX = Integer.parseInt(upChess[0]);</span><br><span class="line">                    mUpChessY = Integer.parseInt(upChess[1]);</span><br><span class="line">                    if (flag == CHESS_WHITE) &#123;</span><br><span class="line">                        mChessFlag = CHESS_BLACK;</span><br><span class="line">                    &#125; else &#123;</span><br><span class="line">                        mChessFlag = CHESS_WHITE;</span><br><span class="line">                    &#125;</span><br><span class="line">                    isMe = !isMe;</span><br><span class="line">                &#125;</span><br><span class="line">                invalidate();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            Toast.makeText(mBleGameActivity, &quot;请重新开始!&quot;, Toast.LENGTH_SHORT).show();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public boolean isMe() &#123;</span><br><span class="line">        return isMe;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public interface onBluetoothListener &#123;</span><br><span class="line">        void onCommand(String temp);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setTvWin(TextView tvWin) &#123;</span><br><span class="line">        mTvWin = tvWin;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><h1 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h1><ul>
+<li><h4 id="主要还是一些细节我自己处理得不是很好-比如说内存占用啊-很多流没关啊-但是基本的一个五子棋的功能已经做得比较完美了-看以后如果还有时间的话-我会继续维护的-可我觉得五子棋没什么意思-想做点比较流行的啊-比如说王者荣耀啊-或者把五子棋联网对战啊"><a href="#主要还是一些细节我自己处理得不是很好-比如说内存占用啊-很多流没关啊-但是基本的一个五子棋的功能已经做得比较完美了-看以后如果还有时间的话-我会继续维护的-可我觉得五子棋没什么意思-想做点比较流行的啊-比如说王者荣耀啊-或者把五子棋联网对战啊" class="headerlink" title="主要还是一些细节我自己处理得不是很好, 比如说内存占用啊, 很多流没关啊, 但是基本的一个五子棋的功能已经做得比较完美了, 看以后如果还有时间的话, 我会继续维护的, 可我觉得五子棋没什么意思, 想做点比较流行的啊, 比如说王者荣耀啊, 或者把五子棋联网对战啊."></a>主要还是一些细节我自己处理得不是很好, 比如说内存占用啊, 很多流没关啊, 但是基本的一个五子棋的功能已经做得比较完美了, 看以后如果还有时间的话, 我会继续维护的, 可我觉得五子棋没什么意思, 想做点比较流行的啊, 比如说王者荣耀啊, 或者把五子棋联网对战啊.</h4></li>
+<li><h4 id="但是好像最近学习比较忙-就没什么时间来做这些个人项目了-主要还是以学习为主-这个项目让我学到了蓝牙的使用啊-之前一直想玩玩蓝牙-WiFi什么的连接类-如今算是实现了"><a href="#但是好像最近学习比较忙-就没什么时间来做这些个人项目了-主要还是以学习为主-这个项目让我学到了蓝牙的使用啊-之前一直想玩玩蓝牙-WiFi什么的连接类-如今算是实现了" class="headerlink" title="但是好像最近学习比较忙,就没什么时间来做这些个人项目了,主要还是以学习为主,这个项目让我学到了蓝牙的使用啊,之前一直想玩玩蓝牙\WiFi什么的连接类, 如今算是实现了."></a>但是好像最近学习比较忙,就没什么时间来做这些个人项目了,主要还是以学习为主,这个项目让我学到了蓝牙的使用啊,之前一直想玩玩蓝牙\WiFi什么的连接类, 如今算是实现了.</h4></li>
+<li><h4 id="最终效果图发一下吧-没图说个"><a href="#最终效果图发一下吧-没图说个" class="headerlink" title="最终效果图发一下吧,没图说个.."></a>最终效果图发一下吧,没图说个..</h4><p><img src="http://img.blog.csdn.net/20170407153803201?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+</li>
+<li><h4 id="项目地址-https-github-com-703692499-Gobang"><a href="#项目地址-https-github-com-703692499-Gobang" class="headerlink" title="项目地址: [https://github.com/703692499/Gobang]"></a>项目地址: [<a href="https://github.com/703692499/Gobang" target="_blank" rel="noopener">https://github.com/703692499/Gobang</a>]</h4></li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>感谢阅读,您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="ThatNight 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="ThatNight 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/蓝牙五子棋/" rel="tag"># 蓝牙五子棋</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/31/Android——一行代码实现炫酷Button/" rel="next" title="一行代码实现炫酷Button">
+                <i class="fa fa-chevron-left"></i> 一行代码实现炫酷Button
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/31/自己动手做一个WanAndroid客户端/" rel="prev" title="自己动手做一个WanAndroid客户端">
+                自己动手做一个WanAndroid客户端 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMzAwMy85NTY1"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4"
+                alt="ThatNight" />
+            
+              <p class="site-author-name" itemprop="name">ThatNight</p>
+              <p class="site-description motion-element" itemprop="description">前进, 莫回头.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/thatnight" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/Williamschew/activities" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#蓝牙的基础知识"><span class="nav-number">2.</span> <span class="nav-text">蓝牙的基础知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#项目解析"><span class="nav-number">3.</span> <span class="nav-text">项目解析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#文件结构"><span class="nav-number">3.1.</span> <span class="nav-text">文件结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#人机对战算法"><span class="nav-number">3.2.</span> <span class="nav-text">人机对战算法</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#主要的模块"><span class="nav-number">3.3.</span> <span class="nav-text">主要的模块</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#蓝牙游戏模块"><span class="nav-number">3.3.1.</span> <span class="nav-text">蓝牙游戏模块</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#总结"><span class="nav-number">4.</span> <span class="nav-text">总结</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#主要还是一些细节我自己处理得不是很好-比如说内存占用啊-很多流没关啊-但是基本的一个五子棋的功能已经做得比较完美了-看以后如果还有时间的话-我会继续维护的-可我觉得五子棋没什么意思-想做点比较流行的啊-比如说王者荣耀啊-或者把五子棋联网对战啊"><span class="nav-number">4.0.0.1.</span> <span class="nav-text">主要还是一些细节我自己处理得不是很好, 比如说内存占用啊, 很多流没关啊, 但是基本的一个五子棋的功能已经做得比较完美了, 看以后如果还有时间的话, 我会继续维护的, 可我觉得五子棋没什么意思, 想做点比较流行的啊, 比如说王者荣耀啊, 或者把五子棋联网对战啊.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#但是好像最近学习比较忙-就没什么时间来做这些个人项目了-主要还是以学习为主-这个项目让我学到了蓝牙的使用啊-之前一直想玩玩蓝牙-WiFi什么的连接类-如今算是实现了"><span class="nav-number">4.0.0.2.</span> <span class="nav-text">但是好像最近学习比较忙,就没什么时间来做这些个人项目了,主要还是以学习为主,这个项目让我学到了蓝牙的使用啊,之前一直想玩玩蓝牙\WiFi什么的连接类, 如今算是实现了.</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#最终效果图发一下吧-没图说个"><span class="nav-number">4.0.0.3.</span> <span class="nav-text">最终效果图发一下吧,没图说个..</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#项目地址-https-github-com-703692499-Gobang"><span class="nav-number">4.0.0.4.</span> <span class="nav-text">项目地址: [https://github.com/703692499/Gobang]</span></a></li></ol></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ThatNight</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("rNGy7xuMe8xVYBpzyk6gRnfd-gzGzoHsz", "RscD6Blam0yUUGbO55M3F0Q5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

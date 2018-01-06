@@ -1,0 +1,1103 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Intent," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Android Intent详解 Intent简介 Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：  启动Activity： startActivity()启动,并可以携带数据 startActivityForResult(),这是启动Activity并可返回数据的一种.   启动服务： startService(),启动服务执行一次性操作(如下载">
+<meta name="keywords" content="Intent">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android Intent详解">
+<meta property="og:url" content="https://thatnight.github.io/2017/12/31/入门——Intent 详解/index.html">
+<meta property="og:site_name" content="ThatNight&#39;s Blog">
+<meta property="og:description" content="Android Intent详解 Intent简介 Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：  启动Activity： startActivity()启动,并可以携带数据 startActivityForResult(),这是启动Activity并可返回数据的一种.   启动服务： startService(),启动服务执行一次性操作(如下载">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-01-06T13:09:40.415Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android Intent详解">
+<meta name="twitter:description" content="Android Intent详解 Intent简介 Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：  启动Activity： startActivity()启动,并可以携带数据 startActivityForResult(),这是启动Activity并可返回数据的一种.   启动服务： startService(),启动服务执行一次性操作(如下载">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://thatnight.github.io/2017/12/31/入门——Intent 详解/"/>
+
+
+
+
+
+  <title>Android Intent详解 | ThatNight's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?74f1a8bbc0e841e49924177b36e02d9a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ThatNight's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">那时候坚持不懈的我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://thatnight.github.io/2017/12/31/入门——Intent 详解/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ThatNight">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ThatNight's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android Intent详解</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-31T20:19:02+08:00">
+                2017-12-31
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/四大组件/" itemprop="url" rel="index">
+                    <span itemprop="name">四大组件</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/31/入门——Intent 详解/" class="leancloud_visitors" data-flag-title="Android Intent详解">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Android-Intent详解"><a href="#Android-Intent详解" class="headerlink" title="Android Intent详解"></a>Android Intent详解</h2><ul>
+<li><h3 id="Intent简介"><a href="#Intent简介" class="headerlink" title="Intent简介"></a>Intent简介</h3><ul>
+<li><p>Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：</p>
+<ul>
+<li><strong>启动Activity</strong>：<ul>
+<li>startActivity()启动,并可以携带数据</li>
+<li>startActivityForResult(),这是启动Activity并可返回数据的一种.</li>
+</ul>
+</li>
+<li><strong>启动服务</strong>：<ul>
+<li>startService(),启动服务执行一次性操作(如下载文件),Intent 描述了要启动的服务,并携带了任何必要的数据.</li>
+</ul>
+</li>
+<li><p><strong>传递广播</strong>：</p>
+<ul>
+<li><p>广播是任何应用均可接受的消息, 可通过Intent传递给sendBroadcast()等方法,可以将广播传递给其他应用.</p>
+<a id="more"></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="Intent类型"><a href="#Intent类型" class="headerlink" title="Intent类型"></a>Intent类型</h3><ul>
+<li><p><strong>显式Intent</strong>:</p>
+<p>  按名称(类名)指定要启动的组件,通常是自己应用的使用显式Intent来启动组件.</p>
+</li>
+<li><p><strong>隐式Intent</strong>:</p>
+<p>  不会指定特定的组件, 而是声明要执行的常规操作, 从而允许其他的应用组件来处理它</p>
+</li>
+<li><p><strong>区别</strong> :</p>
+<ul>
+<li><p>创建显式Intent的时候,系统会立即启动Intent对象中指定的组件.</p>
+</li>
+<li><p>创建隐式Intent的时候,系统会通过将Intent的内容与设备上其他应用的<strong>清单文件</strong>中声明的Intent过滤器进行比较。如果Intent与Intent过滤器匹配，则系统将启动该组件，并向其传递该Intent对象，如果多个Intent过滤器兼容，则系统会显示一个对话框，让用户来选择。</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="构建Intent"><a href="#构建Intent" class="headerlink" title="构建Intent"></a>构建Intent</h3>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    private static final String ATTR_ACTION = &quot;action&quot;;</span><br><span class="line">private static final String TAG_CATEGORIES = &quot;categories&quot;;</span><br><span class="line">private static final String ATTR_CATEGORY = &quot;category&quot;;</span><br><span class="line">private static final String TAG_EXTRA = &quot;extra&quot;;</span><br><span class="line">private static final String ATTR_TYPE = &quot;type&quot;;</span><br><span class="line">private static final String ATTR_COMPONENT = &quot;component&quot;;</span><br><span class="line">private static final String ATTR_DATA = &quot;data&quot;;</span><br><span class="line">private static final String ATTR_FLAGS = &quot;flags&quot;;</span><br></pre></td></tr></table></figure>
+<ul>
+<li><p><strong>组件名称</strong></p>
+<p>  可选项, 但是构建显示Intent的重要信息, 如果没有那就是隐式的Intent, 那么系统将根据Intent的其他信息(如下面的那些).</p>
+<p>  可以通过<strong>setComponent()</strong>\<strong>setClass</strong>()\<strong>setClassName</strong>()或者Intent构造方法来设置组件名称</p>
+</li>
+<li><p><strong>操作</strong></p>
+<p>  指定要执行的通用操作的<strong>字符串</strong>;<br>  例子:</p>
+<ul>
+<li><p>ACTION_VIEW:</p>
+<p>  如果有某一项Activity可向用户显示的信息,(用图库查看照片), 使用Intent将此操作与startActivity()结合使用</p>
+</li>
+<li><p>ACTION_SEND:</p>
+<p>  “共享”Intent, 如果有一些用户可通过其他应用共享的数据(发给好友或朋友圈), 也是结合startActivity()</p>
+<p>但其实并不止这么少, 还有很多,也可以定义自己的操作,但是确保将<strong>应用的软件包名称</strong>作为前缀。</p>
+<p>可通过setAction()或者Intent的构造方法.</p>
+</li>
+</ul>
+</li>
+<li><p><strong>数据</strong></p>
+<p>  提供的数据类型由Intent的操作决定, 如果操作是ACTION_EDIT, 则数据应包含待编辑文档的URI.</p>
+<p>  除了制定URI意外, 制定数据类型(MIME类型)也很重要.</p>
+<p>  若仅设置URI, 调用setData() ,若仅设置MIME类型, 调用setType(),</p>
+<blockquote>
+<p>若要同时设置URI和MIME , 使用setDataAndType()方法.</p>
+</blockquote>
+</li>
+<li><p><strong>类别</strong></p>
+<p>  一个包含应处理Intent组件类型的附加信息的字符串, 可以将任意数量的类别描述放入一个Intent里, 例如:</p>
+<p>  CATEGORY_BROWSABLE:</p>
+<p>  目标Activity允许本身通过网络浏览器启动，以显示链接引用的数据，如图像或电子邮件。</p>
+<p>  CATEGORY_LAUNCHER:</p>
+<p>  该 Activity 是任务的初始 Activity，在系统的应用启动器中列出。</p>
+<p>  可以通过**addCategory()来指定类别。</p>
+<blockquote>
+<p>以上的属性就是Intent的特征, 有了这些特征, 系统就可以知道应该干什么了 .</p>
+</blockquote>
+</li>
+<li><p>但是呢, Intent也可以携带一些其他的信息 , 并不影响系统对它的解析.</p>
+<p>  例如:   </p>
+<ul>
+<li><p>Extra:  </p>
+<p>  也就是常见的putExtra()方法了, 这个方法需要传入两个参数:键名和值, 也可以创建一个包含所有extra数据的Bundle对象, 然后使用putExtras()将Bundle插入Intent中.</p>
+</li>
+<li><p>标志: </p>
+<p>  可以参照一下 <a href="https://developer.android.com/reference/android/content/Intent.html#setFlags(int" target="_blank" rel="noopener">setFlags()</a>)(需要翻 墙哦).</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="接收隐式Intent"><a href="#接收隐式Intent" class="headerlink" title="接收隐式Intent"></a>接收隐式Intent</h3><p>  清单文件AndroidManifest.xml中使用<intent-filter>元素为每个应用组件声明一个或多个Intent过滤器, 过滤器会根据Intent的信息 通过某一类的Intent.</intent-filter></p>
+<blockquote>
+<p>显示Intent始终会传递个目标, 无论声明了Intent过滤器如何都是如此</p>
+</blockquote>
+<p>  至于如何过滤的, 在文章后面会详细介绍.    </p>
+</li>
+<li><h3 id="使用PendinfIntent"><a href="#使用PendinfIntent" class="headerlink" title="使用PendinfIntent"></a>使用PendinfIntent</h3><p>  PendingIntent对象是Intent的包装器, 目的就是授权外部应用使用包含的Intent, 就像它从你应用本身的进程执行一样</p>
+<p>  使用案例:</p>
+<ul>
+<li><strong>通知</strong>执行操作的Intent</li>
+<li><strong>应用小部件</strong></li>
+<li><strong>某一特定时间要执行的Intent</strong></li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li><h3 id="Intent-过滤器："><a href="#Intent-过滤器：" class="headerlink" title="Intent 过滤器："></a>Intent 过滤器：</h3><ul>
+<li><p>过滤器的官方源代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;activity android:name=&quot;MainActivity&quot;&gt;</span><br><span class="line">    &lt;!-- This activity is the main entry, should appear in app launcher --&gt;</span><br><span class="line">    &lt;intent-filter&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;</span><br><span class="line">        &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">    &lt;/intent-filter&gt;</span><br><span class="line">&lt;/activity&gt;</span><br><span class="line"></span><br><span class="line">&lt;activity android:name=&quot;ShareActivity&quot;&gt;</span><br><span class="line">    &lt;!-- This activity handles &quot;SEND&quot; actions with text data --&gt;</span><br><span class="line">    &lt;intent-filter&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.SEND&quot;/&gt;</span><br><span class="line">        &lt;category android:name=&quot;android.intent.category.DEFAULT&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;text/plain&quot;/&gt;</span><br><span class="line">    &lt;/intent-filter&gt;</span><br><span class="line">    &lt;!-- This activity also handles &quot;SEND&quot; and &quot;SEND_MULTIPLE&quot; with media data --&gt;</span><br><span class="line">    &lt;intent-filter&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.SEND&quot;/&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.SEND_MULTIPLE&quot;/&gt;</span><br><span class="line">        &lt;category android:name=&quot;android.intent.category.DEFAULT&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;application/vnd.google.panorama360+jpg&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;image/*&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;video/*&quot;/&gt;</span><br><span class="line">    &lt;/intent-filter&gt;</span><br><span class="line">&lt;/activity&gt;</span><br></pre></td></tr></table></figure>
+<p>第二个 Activity ShareActivity 旨在便于共享文本和媒体内容。 尽管用户可以通过从 MainActivity 导航进入此 Activity，但也可以从发出隐式 Intent（与两个 Intent 过滤器之一匹配）的另一应用中直接进入 ShareActivity。</p>
+<blockquote>
+<p>注：MIME 类型 application/vnd.google.panorama360+jpg 是一个指定全景照片的特殊数据类型，您可以使用 Google panorama API 对其进行处理。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Intent的解析"><a href="#Intent的解析" class="headerlink" title="Intent的解析"></a>Intent的解析</h3><p>Intent解析机制主要是通过查找已注册在AndroidManifest.xml中的所有<intent-filter>及其中定义的Intent，通过PackageManager（注：PackageManager能够得到当前设备上所安装的<br>application package的信息）来查找能处理这个Intent的component。在这个解析过程中，Android是通过Intent的action、type、category这三个属性来进行判断的，</intent-filter></p>
+<ul>
+<li><p><strong>匹配法则</strong></p>
+<ul>
+<li>如果Intent指明定了action，则目标组件的IntentFilter的action列表中就必须包含有这个action，否则不能匹配；</li>
+<li><p>如果Intent没有提供type，系统将从data中得到数据类型。和action一样，目标组件的数据类型列表中必须包含Intent的数据类型，否则不能匹配。</p>
+</li>
+<li><p>如果Intent中的数据不是content:类型的URI，而且Intent也没有明确指定type，将根据Intent中数据的scheme（比如 http:或者mailto:）进行匹配。同上，Intent 的scheme必须出现在目标组件的scheme列表中。</p>
+</li>
+<li><p>如果Intent指定了一个或多个category，这些类别必须全部出现在组建的类别列表中。比如Intent中包含了两个类别：LAUNCHER_CATEGORY和ALTERNATIVE_CATEGORY，解析得到的目标组件必须至少包含这两个类别。</p>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>感谢阅读,您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="ThatNight 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="ThatNight 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Intent/" rel="tag"># Intent</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/31/无聊学习Python——每日必应换壁纸/" rel="next" title="无聊学习Python——每日必应换壁纸">
+                <i class="fa fa-chevron-left"></i> 无聊学习Python——每日必应换壁纸
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/31/Java 设计模式——单例模式详解/" rel="prev" title="Java 设计模式——单例模式详解">
+                Java 设计模式——单例模式详解 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMzAwMy85NTY1"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4"
+                alt="ThatNight" />
+            
+              <p class="site-author-name" itemprop="name">ThatNight</p>
+              <p class="site-description motion-element" itemprop="description">前进, 莫回头.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">7</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">13</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/thatnight" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/Williamschew/activities" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-Intent详解"><span class="nav-number">1.</span> <span class="nav-text">Android Intent详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent简介"><span class="nav-number">1.1.</span> <span class="nav-text">Intent简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent类型"><span class="nav-number">1.2.</span> <span class="nav-text">Intent类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建Intent"><span class="nav-number">1.3.</span> <span class="nav-text">构建Intent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接收隐式Intent"><span class="nav-number">1.4.</span> <span class="nav-text">接收隐式Intent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用PendinfIntent"><span class="nav-number">1.5.</span> <span class="nav-text">使用PendinfIntent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent-过滤器："><span class="nav-number">1.6.</span> <span class="nav-text">Intent 过滤器：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent的解析"><span class="nav-number">1.7.</span> <span class="nav-text">Intent的解析</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ThatNight</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("rNGy7xuMe8xVYBpzyk6gRnfd-gzGzoHsz", "RscD6Blam0yUUGbO55M3F0Q5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
