@@ -1,0 +1,1206 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="JVM," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="JVM这篇笔记写给自己在实习之前看的，有什么不对地方请广而告知，我会持续更新修改。  本片文章字数较多，适合快速浏览，有不详细的请另行百度">
+<meta name="keywords" content="JVM">
+<meta property="og:type" content="article">
+<meta property="og:title" content="JVM 快速阅读笔记">
+<meta property="og:url" content="https://thatnight.github.io/2018/01/20/jvm 快速阅读笔记/index.html">
+<meta property="og:site_name" content="ThatNight&#39;s Blog">
+<meta property="og:description" content="JVM这篇笔记写给自己在实习之前看的，有什么不对地方请广而告知，我会持续更新修改。  本片文章字数较多，适合快速浏览，有不详细的请另行百度">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://p2e1umi3v.bkt.clouddn.com/18-1-20/22035930.jpg">
+<meta property="og:image" content="http://p2e1umi3v.bkt.clouddn.com/18-1-20/11794720.jpg">
+<meta property="og:updated_time" content="2018-01-23T08:41:57.621Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="JVM 快速阅读笔记">
+<meta name="twitter:description" content="JVM这篇笔记写给自己在实习之前看的，有什么不对地方请广而告知，我会持续更新修改。  本片文章字数较多，适合快速浏览，有不详细的请另行百度">
+<meta name="twitter:image" content="http://p2e1umi3v.bkt.clouddn.com/18-1-20/22035930.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://thatnight.github.io/2018/01/20/jvm 快速阅读笔记/"/>
+
+
+
+
+
+  <title>JVM 快速阅读笔记 | ThatNight's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?74f1a8bbc0e841e49924177b36e02d9a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ThatNight's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">那时候坚持不懈的我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://thatnight.github.io/2018/01/20/jvm 快速阅读笔记/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ThatNight">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ThatNight's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">JVM 快速阅读笔记</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-20T20:19:51+08:00">
+                2018-01-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/01/20/jvm 快速阅读笔记/" class="leancloud_visitors" data-flag-title="JVM 快速阅读笔记">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h2><p>这篇笔记写给自己在实习之前看的，有什么不对地方请广而告知，我会持续更新修改。</p>
+<blockquote>
+<p>本片文章字数较多，适合快速浏览，有不详细的请另行百度</p>
+</blockquote>
+<a id="more"></a>
+<hr>
+<h3 id="运行时数据区域"><a href="#运行时数据区域" class="headerlink" title="运行时数据区域"></a>运行时数据区域</h3><p><img src="http://p2e1umi3v.bkt.clouddn.com/18-1-20/22035930.jpg" alt=""></p>
+<ul>
+<li>程序计数器: 指示执行某条指令</li>
+<li>虚拟机栈(栈): 每个栈帧对应一个方法包括局部变量表、操作数栈、运行时的常量池、</li>
+<li>本地方法栈：为使用到的本地操作系统方法服务</li>
+<li>java堆：线程共享的一块内存区域，对象实例和数组都在这里分配内存</li>
+<li>方法区（hotspot包含运行时常量池）：已经加载的类信息、常量、静态变量、即时编译器编译后的代码等数据。</li>
+<li>*直接内存</li>
+</ul>
+<h3 id="Object-o-new-Object"><a href="#Object-o-new-Object" class="headerlink" title="Object o = new Object();"></a>Object o = new Object();</h3><ul>
+<li><p>对象创建过程：</p>
+<p>  new-&gt;检查这个指令的参数是否能在常量池中定位到一个类的符号引用-&gt;检查这个符号引用代表的类是否已被加载、解析和初始化-&gt;若无则类加载，有则进行分配内存（指针碰撞/空闲列表）-&gt; <init>方法执行初始化字段。</init></p>
+</li>
+<li>对象的内存布局：对象头、实例数据、对齐填充</li>
+<li>对象访问<ul>
+<li>句柄池：两个指针，对象数据地址、对象类型地址。优点：当对象被移动时（垃圾回收时），只改变句柄中的指针，实例不变。</li>
+<li>直接指针：实例存储了类型数据的地址；优点：速度快，少一次指针定位的时间；</li>
+</ul>
+</li>
+</ul>
+<h3 id="新生代和老生代"><a href="#新生代和老生代" class="headerlink" title="新生代和老生代"></a>新生代和老生代</h3><ul>
+<li>新生代GC（Minor）：对象大多都朝生熄灭</li>
+<li>老生代GC（Major）：老年代经常伴随一次MinorGC，比Minor慢10倍</li>
+</ul>
+<h3 id="OOM-OutOfMemoryError-amp-SOFE-StackOverFlowError"><a href="#OOM-OutOfMemoryError-amp-SOFE-StackOverFlowError" class="headerlink" title="OOM (OutOfMemoryError) &amp; SOFE(StackOverFlowError)"></a>OOM (OutOfMemoryError) &amp; SOFE(StackOverFlowError)</h3><ul>
+<li>内存泄漏：分配出去的内存没有回收，失去了对该区域的控制，因而造成了资源浪费，虽然有GC，但是还是会有泄漏。</li>
+<li>内存溢出：程序所需要的内存超出了系统所能分配的内存的上限；</li>
+</ul>
+<h3 id="GC"><a href="#GC" class="headerlink" title="GC"></a>GC</h3><ul>
+<li><h4 id="判断对象是否可回收"><a href="#判断对象是否可回收" class="headerlink" title="判断对象是否可回收"></a>判断对象是否可回收</h4><ul>
+<li><p>引用技术算法为什么不好？（对象之间循环引用问题）：</p>
+<p>  若被引用一次，计数器+1，引用失效-1，为0就回收。</p>
+</li>
+<li><p>跟搜索算法（GC Roots)</p>
+<p>  GCRoots可以是：虚拟机栈的引用对象、方法去的类静态属性引用的对象、方法区常量引用的对象、本地方发栈中JNI引用的对象；</p>
+<p>  判断对象到GCRoots是否可达，不可达则回收；</p>
+</li>
+<li><p>强引用：直接通过new来创建的对象</p>
+</li>
+<li>软引用：SoftReference创建的，内存不足（溢出）则回收</li>
+<li>弱引用：WeakReference创建的，下一次垃圾收集就会回收</li>
+<li>虚引用：PhatomReference创建的，总会回收，主要用来当回收时获取一下系统通知；</li>
+</ul>
+</li>
+<li><p>finalize()方法与GC二次标记</p>
+<p>  第一次标记筛选：没有必要执行finalize()方法：没有覆盖finalize()/已经被调用过，直接回收</p>
+<p>  自救：对象覆盖finalize()，把自己赋值给某个类变量或对象成员变量；第二次标记时他会被移除</p>
+</li>
+<li><p>回收方法区（永生代回收1.废弃常量2.无用的类）</p>
+<ul>
+<li><p>无用的类：<br>  该类所有实例已经被回收，java堆中不存在该类的实例</p>
+<p>  加载该类的ClassLoader被回收了</p>
+<p>  对应的Class对象没有任何地方引用，无法反射访问该类</p>
+<blockquote>
+<p>在大量使用反射、动态代理、CGLib等框架的场景，需要具备类卸载的功能，保证永久代不会溢出。</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><h4 id="垃圾收集算法"><a href="#垃圾收集算法" class="headerlink" title="垃圾收集算法"></a>垃圾收集算法</h4></li>
+<li>标记-清除算法（标记，清理）</li>
+<li>复制算法（分一半内存，存活的复制到另一块内存/新生代、老生代90%）</li>
+<li>标记-整理算法（标记，存活对象向一端移动，再清理）</li>
+<li>分代收集算法（新生代用复制，老生代用标记-清理或整理）</li>
+</ul>
+<h3 id="垃圾收集器"><a href="#垃圾收集器" class="headerlink" title="垃圾收集器"></a>垃圾收集器</h3><blockquote>
+<p>并行: 多条垃圾收集线程并行工作,用户线程暂停</p>
+<p>并发: 用户线程和垃圾收集线程同时执行,垃圾收集线程运行再另一CPU上.</p>
+</blockquote>
+<ul>
+<li>Serial    :单线程收集暂停其他所有线程</li>
+<li>ParNew    :多线程收集暂停其他所有线程</li>
+<li>Parallel Scavenge     :吞吐量优先，自适应调节策略</li>
+<li>Serial Old：Serial老年代版本，采用‘标记-整理’清理老年代；Parallel Old</li>
+<li><p>CMS   ：以获取最短回收停顿时间为目标，采用‘标记-清除’</p>
+<p>  初始标记、并发标记、重新标记、并发清理、重置线程</p>
+<p>  缺点：采用标记-清除，对CPU资源敏感（占线程）；</p>
+</li>
+<li><p>G1    ：面向服务端应用，采用‘标记-整理’，优先回收垃圾最多的区域（已分成大小固定的块），局部看是基于复制算法实现两个Region之间；</p>
+<p>  初始标记-并发标记-最终标记-筛选回收</p>
+<p>  初始标记和最终标记的区别：初始标记是单线程，最终标记是并行的</p>
+</li>
+</ul>
+<h3 id="内存分配和回收策略"><a href="#内存分配和回收策略" class="headerlink" title="内存分配和回收策略"></a>内存分配和回收策略</h3><ul>
+<li><h4 id="对象优先再Eden分配"><a href="#对象优先再Eden分配" class="headerlink" title="对象优先再Eden分配"></a>对象优先再Eden分配</h4></li>
+<li><h4 id="大对象直接进入老年代："><a href="#大对象直接进入老年代：" class="headerlink" title="大对象直接进入老年代："></a>大对象直接进入老年代：</h4>  大量连续内存空间的java对象</li>
+<li><h4 id="长期存活的对象将进入老年代："><a href="#长期存活的对象将进入老年代：" class="headerlink" title="长期存活的对象将进入老年代："></a>长期存活的对象将进入老年代：</h4><p>  每个对象都有年龄计数器，每熬过一次MinorGC兵器Survivor空间能够容纳，则年龄+1，默认超过15岁就晋升为老年代</p>
+</li>
+<li><h4 id="动态对象年龄判定："><a href="#动态对象年龄判定：" class="headerlink" title="动态对象年龄判定："></a>动态对象年龄判定：</h4>  Survivor空间中相同年龄的所有对象大小大于Survivor空间的一半，年龄大于或等于该年龄的对象就可以直接进入老年代；</li>
+<li><h4 id="空间分配担保"><a href="#空间分配担保" class="headerlink" title="空间分配担保"></a>空间分配担保</h4>  在发生MinorGC前，检测之前每次晋升为老生代的平均大小是否大于老年代的剩余空间，大于则进行FullGC，否则查看HandlPromotionFailure设置是否允许担保失败，允许则还是MinorGC，不允许则FullGC；</li>
+</ul>
+<h3 id="虚拟机执行子系统"><a href="#虚拟机执行子系统" class="headerlink" title="虚拟机执行子系统"></a>虚拟机执行子系统</h3><ul>
+<li><h4 id="Class文件结构：8个字节数据流、"><a href="#Class文件结构：8个字节数据流、" class="headerlink" title="Class文件结构：8个字节数据流、"></a>Class文件结构：8个字节数据流、</h4><ul>
+<li>魔数：头4个字节，确定是否能被虚拟机接受</li>
+<li>Class版本号：魔数后的4个字节，前两个是次版本，后面是主版本</li>
+<li>常量池：开头u2数据类型，从1开始计数；主要放字面量（类和接口全限定名、字段名称描述符和方法名称描述符）和符号引用；省略很多..</li>
+<li>访问标志：识别类和接口的访问信息</li>
+<li>类索引、父类索引和接口索引：类和父类都是一个u2类型，接口是一组u2；用来确定类的继承关系</li>
+<li>字段表集合：描述接口或类中声明的变量</li>
+<li>方法表集合</li>
+<li>属性表集合：Code；Exceptions；Line Number Table；Local Variable Table；Source File；Constant Value；InnerClasses；Deprecated和Synthetic；</li>
+</ul>
+</li>
+<li><h3 id="类加载机制"><a href="#类加载机制" class="headerlink" title="类加载机制"></a>类加载机制</h3><p>  加载-验证-准备-解析-初始化-使用-卸载</p>
+<p>  连接：验证-准备-解析</p>
+<ul>
+<li><h4 id="过程"><a href="#过程" class="headerlink" title="过程"></a>过程</h4><ul>
+<li><p>四种情况必须立即进行“初始化”（加载、验证、准备先开始）：</p>
+<ul>
+<li>遇到new、getstatic、putstatic或invoke static字节码指令时</li>
+<li>反射调用时</li>
+<li>初始化一个类，父类没初始化时</li>
+<li>需要制定一个要执行的主类</li>
+</ul>
+</li>
+<li><p>加载：1.通过全限定名获取定义此类的二进制字节流 2.将这个字节流代表的静态存储结构转化为方法区的运行时数据结构 3. 生成代表该类的Class对象</p>
+<blockquote>
+<p>全限定名：包名.类名</p>
+</blockquote>
+</li>
+<li><p>验证：文件格式、元数据、字节码（最复杂，保证安全）、符号引用；此阶段可省略</p>
+</li>
+<li>准备：为类变量（static修饰的）分配内存并设置变量初始值0</li>
+<li><p>解析：将常量池内的符号引用替换为直接引用；</p>
+<p>  （符号引用就是一组符号来描述所引用的目标）直接引用就是指针、相对偏移量、一个能简介定位到目标的句柄；</p>
+</li>
+<li><p>初始化：类加载的最后一步，开始执行类中定义的Java程序代码</p>
+<blockquote>
+<p><clinit>()方法：所有类变量的赋值动作和静态语句块的语句合并产生。必须回调用父类的<clinit>()；如果没有静态语句块，也没有对变量的赋值操作，那么可以没有<clinit>()方法；接口不需要执行父类的<clinit>()，除非父类定义的变量使用时；虚拟机回保证一个类的<clinit>()方法在多线程同步；</clinit></clinit></clinit></clinit></clinit></p>
+</blockquote>
+</li>
+<li><p>使用  </p>
+</li>
+<li><p>卸载</p>
+<blockquote>
+<p>加载和连接阶段可交叉运行，加载未完成，连接可开始，</p>
+</blockquote>
+</li>
+</ul>
+</li>
+<li><h4 id="类加载器"><a href="#类加载器" class="headerlink" title="类加载器"></a>类加载器</h4><ul>
+<li>双亲委派模型：启动类&lt;-扩展类&lt;-应用程序&lt;-自定义类</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="方法重载和方法重写"><a href="#方法重载和方法重写" class="headerlink" title="方法重载和方法重写"></a>方法重载和方法重写</h3><ul>
+<li>（重载）静态分派：静态类型变化，实际类型变化</li>
+<li>（重写）动态分派：多态性的表现</li>
+</ul>
+<h3 id="编译优化技术"><a href="#编译优化技术" class="headerlink" title="编译优化技术"></a>编译优化技术</h3><ul>
+<li>公共子表达式消除</li>
+<li>数组边界检查消除</li>
+<li>方法内联</li>
+<li><p>逃逸分析（主要）：分析对象动态作用域</p>
+<p>  方法逃逸：当一个对象在方法中定义后，可能被外部方法引用，例如作为<strong>参数</strong>传递到其他方法中；<br>  线程逃逸：赋值给类变量或可以在其他线程中访问的实例变量。</p>
+<h3 id="内存模型"><a href="#内存模型" class="headerlink" title="内存模型"></a>内存模型</h3><p>作用：用来屏蔽掉各种硬件和操作系统的内存访问差异，实现java跨平台访问内存；</p>
+</li>
+<li><h4 id="模型"><a href="#模型" class="headerlink" title="模型"></a>模型</h4><img src="http://p2e1umi3v.bkt.clouddn.com/18-1-20/11794720.jpg" alt=""><ul>
+<li>主内存：存储所有变量；对应Java堆中<strong>对象实例数据部分</strong></li>
+<li>工作内存：每条线程都有自己的工作内存，保存变量的主内存副本拷贝；对应虚拟机栈中部分区域</li>
+</ul>
+</li>
+<li><h4 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h4><ul>
+<li>可见性</li>
+<li>禁止指令重排序</li>
+</ul>
+</li>
+<li><h4 id="原子性、可见性、有序性"><a href="#原子性、可见性、有序性" class="headerlink" title="原子性、可见性、有序性"></a>原子性、可见性、有序性</h4><ul>
+<li>原子性：除了lock\unlock之外的6种保证原子性，</li>
+<li>可见性：一个线程修改了共享变量的值，其他线程立即知道（Volatile、Synchronize、final）</li>
+<li>有序性：本线程观察是有序的，观察另一个线程时无序的</li>
+</ul>
+</li>
+</ul>
+<h3 id="线程"><a href="#线程" class="headerlink" title="线程"></a>线程</h3><ul>
+<li>内核线程</li>
+<li>用户线程</li>
+<li>用户线程+轻量级进程混合</li>
+<li><h5 id="线程调度"><a href="#线程调度" class="headerlink" title="线程调度"></a>线程调度</h5><ul>
+<li>协同式：线程完成后切换到其他线程</li>
+<li>抢占式</li>
+</ul>
+</li>
+<li><h5 id="状态转换"><a href="#状态转换" class="headerlink" title="状态转换"></a>状态转换</h5><ul>
+<li>新建</li>
+<li>运行</li>
+<li>无期限等待</li>
+</ul>
+</li>
+<li><h3 id="线程安全和锁优化"><a href="#线程安全和锁优化" class="headerlink" title="线程安全和锁优化"></a>线程安全和锁优化</h3><ul>
+<li><h4 id="线程安全"><a href="#线程安全" class="headerlink" title="线程安全"></a>线程安全</h4><ul>
+<li>不可变：使用final</li>
+<li>绝对线程安全</li>
+<li>相对线程安全：通常而言，一般不需要额外做保障措施</li>
+<li>线程兼容：本身不是线程安全，但可以正确使用同步手段</li>
+<li><p>线程对立：不管怎么采取同步措施，都无法并发使用</p>
+</li>
+<li><h5 id="实现方法"><a href="#实现方法" class="headerlink" title="实现方法"></a>实现方法</h5><ul>
+<li><p>互斥同步：使用SynChronize，在同步区前后生成monitorenter和monitorexit字节码指令；</p>
+<ol>
+<li>在执行monitorenter时，首先尝试获取对象的锁，如果没锁，或者线程已经拥有该对象的锁，所得计数器+1，相反，在执行monitorexit时，就-1，当计数器为0，锁就释放了；</li>
+<li><p>如果获取对象锁失败了，当前线程就会阻塞等待，直到另一个线程释放</p>
+<blockquote>
+<p>也可以使用（重入锁）ReentrantLock来实现</p>
+</blockquote>
+</li>
+</ol>
+</li>
+<li>非阻塞同步</li>
+<li>无同步方案    <ul>
+<li>可重入代码</li>
+<li>线程本地存储</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h4 id="锁优化"><a href="#锁优化" class="headerlink" title="锁优化"></a>锁优化</h4><ul>
+<li>自旋锁/自适应自旋</li>
+<li>锁消除：消除不存在共享数据竞争的锁</li>
+<li>锁粗化：扩大锁的范围</li>
+<li>轻量级锁：无竞争时使用CAS消除同步使用的互斥量</li>
+<li>偏向锁：无竞争的情况下把同步都消除掉，不做CAS</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>感谢阅读,您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="ThatNight 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="ThatNight 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/JVM/" rel="tag"># JVM</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/31/自己动手做一个WanAndroid客户端/" rel="next" title="自己动手做一个WanAndroid客户端">
+                <i class="fa fa-chevron-left"></i> 自己动手做一个WanAndroid客户端
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMzAwMy85NTY1"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4"
+                alt="ThatNight" />
+            
+              <p class="site-author-name" itemprop="name">ThatNight</p>
+              <p class="site-description motion-element" itemprop="description">前进, 莫回头.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">8</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/thatnight" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/Williamschew/activities" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#JVM"><span class="nav-number">1.</span> <span class="nav-text">JVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#运行时数据区域"><span class="nav-number">1.1.</span> <span class="nav-text">运行时数据区域</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Object-o-new-Object"><span class="nav-number">1.2.</span> <span class="nav-text">Object o = new Object();</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#新生代和老生代"><span class="nav-number">1.3.</span> <span class="nav-text">新生代和老生代</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OOM-OutOfMemoryError-amp-SOFE-StackOverFlowError"><span class="nav-number">1.4.</span> <span class="nav-text">OOM (OutOfMemoryError) &amp; SOFE(StackOverFlowError)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#GC"><span class="nav-number">1.5.</span> <span class="nav-text">GC</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#判断对象是否可回收"><span class="nav-number">1.5.1.</span> <span class="nav-text">判断对象是否可回收</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#垃圾收集算法"><span class="nav-number">1.5.2.</span> <span class="nav-text">垃圾收集算法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#垃圾收集器"><span class="nav-number">1.6.</span> <span class="nav-text">垃圾收集器</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存分配和回收策略"><span class="nav-number">1.7.</span> <span class="nav-text">内存分配和回收策略</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#对象优先再Eden分配"><span class="nav-number">1.7.1.</span> <span class="nav-text">对象优先再Eden分配</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#大对象直接进入老年代："><span class="nav-number">1.7.2.</span> <span class="nav-text">大对象直接进入老年代：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#长期存活的对象将进入老年代："><span class="nav-number">1.7.3.</span> <span class="nav-text">长期存活的对象将进入老年代：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#动态对象年龄判定："><span class="nav-number">1.7.4.</span> <span class="nav-text">动态对象年龄判定：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#空间分配担保"><span class="nav-number">1.7.5.</span> <span class="nav-text">空间分配担保</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#虚拟机执行子系统"><span class="nav-number">1.8.</span> <span class="nav-text">虚拟机执行子系统</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Class文件结构：8个字节数据流、"><span class="nav-number">1.8.1.</span> <span class="nav-text">Class文件结构：8个字节数据流、</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#类加载机制"><span class="nav-number">1.9.</span> <span class="nav-text">类加载机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#过程"><span class="nav-number">1.9.1.</span> <span class="nav-text">过程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#类加载器"><span class="nav-number">1.9.2.</span> <span class="nav-text">类加载器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#方法重载和方法重写"><span class="nav-number">1.10.</span> <span class="nav-text">方法重载和方法重写</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#编译优化技术"><span class="nav-number">1.11.</span> <span class="nav-text">编译优化技术</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#内存模型"><span class="nav-number">1.12.</span> <span class="nav-text">内存模型</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#模型"><span class="nav-number">1.12.1.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#volatile"><span class="nav-number">1.12.2.</span> <span class="nav-text">volatile</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#原子性、可见性、有序性"><span class="nav-number">1.12.3.</span> <span class="nav-text">原子性、可见性、有序性</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程"><span class="nav-number">1.13.</span> <span class="nav-text">线程</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#线程调度"><span class="nav-number">1.13.0.1.</span> <span class="nav-text">线程调度</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#状态转换"><span class="nav-number">1.13.0.2.</span> <span class="nav-text">状态转换</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#线程安全和锁优化"><span class="nav-number">1.14.</span> <span class="nav-text">线程安全和锁优化</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#线程安全"><span class="nav-number">1.14.1.</span> <span class="nav-text">线程安全</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#实现方法"><span class="nav-number">1.14.1.1.</span> <span class="nav-text">实现方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#锁优化"><span class="nav-number">1.14.2.</span> <span class="nav-text">锁优化</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ThatNight</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("rNGy7xuMe8xVYBpzyk6gRnfd-gzGzoHsz", "RscD6Blam0yUUGbO55M3F0Q5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
