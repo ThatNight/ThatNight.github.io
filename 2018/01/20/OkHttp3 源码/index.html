@@ -64,7 +64,7 @@
 
 
 
-  <meta name="keywords" content="Intent," />
+  <meta name="keywords" content="OkHttp3," />
 
 
 
@@ -75,18 +75,18 @@
 
 
 
-<meta name="description" content="Android Intent详解 Intent简介 Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：  启动Activity： startActivity()启动,并可以携带数据 startActivityForResult(),这是启动Activity并可返回数据的一种.   启动服务： startService(),启动服务执行一次性操作(如下载">
-<meta name="keywords" content="Intent">
+<meta name="description" content="OkHttp3 源码先了解如何使用">
+<meta name="keywords" content="OkHttp3">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android Intent详解">
-<meta property="og:url" content="https://thatnight.github.io/2017/12/31/入门——Intent 详解/index.html">
+<meta property="og:title" content="OkHttp3 源码快速阅读">
+<meta property="og:url" content="https://thatnight.github.io/2018/01/20/OkHttp3 源码/index.html">
 <meta property="og:site_name" content="ThatNight&#39;s Blog">
-<meta property="og:description" content="Android Intent详解 Intent简介 Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：  启动Activity： startActivity()启动,并可以携带数据 startActivityForResult(),这是启动Activity并可返回数据的一种.   启动服务： startService(),启动服务执行一次性操作(如下载">
+<meta property="og:description" content="OkHttp3 源码先了解如何使用">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-06T13:09:40.415Z">
+<meta property="og:updated_time" content="2018-01-26T13:22:46.665Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android Intent详解">
-<meta name="twitter:description" content="Android Intent详解 Intent简介 Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：  启动Activity： startActivity()启动,并可以携带数据 startActivityForResult(),这是启动Activity并可返回数据的一种.   启动服务： startService(),启动服务执行一次性操作(如下载">
+<meta name="twitter:title" content="OkHttp3 源码快速阅读">
+<meta name="twitter:description" content="OkHttp3 源码先了解如何使用">
 
 
 
@@ -116,13 +116,13 @@
 
 
 
-  <link rel="canonical" href="https://thatnight.github.io/2017/12/31/入门——Intent 详解/"/>
+  <link rel="canonical" href="https://thatnight.github.io/2018/01/20/OkHttp3 源码/"/>
 
 
 
 
 
-  <title>Android Intent详解 | ThatNight's Blog</title>
+  <title>OkHttp3 源码快速阅读 | ThatNight's Blog</title>
   
 
 
@@ -269,7 +269,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://thatnight.github.io/2017/12/31/入门——Intent 详解/">
+    <link itemprop="mainEntityOfPage" href="https://thatnight.github.io/2018/01/20/OkHttp3 源码/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="ThatNight">
@@ -286,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Android Intent详解</h1>
+          <h1 class="post-title" itemprop="name headline">OkHttp3 源码快速阅读</h1>
         
 
         <div class="post-meta">
@@ -298,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-31T20:19:02+08:00">
-                2017-12-31
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-20T20:19:51+08:00">
+                2018-01-20
               </time>
             
 
@@ -321,8 +321,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/四大组件/" itemprop="url" rel="index">
-                    <span itemprop="name">四大组件</span>
+                  <a href="/categories/框架源码/" itemprop="url" rel="index">
+                    <span itemprop="name">框架源码</span>
                   </a>
                 </span>
 
@@ -338,7 +338,7 @@
 
           
           
-             <span id="/2017/12/31/入门——Intent 详解/" class="leancloud_visitors" data-flag-title="Android Intent详解">
+             <span id="/2018/01/20/OkHttp3 源码/" class="leancloud_visitors" data-flag-title="OkHttp3 源码快速阅读">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -369,139 +369,139 @@
       
 
       
-        <h2 id="Android-Intent详解"><a href="#Android-Intent详解" class="headerlink" title="Android Intent详解"></a>Android Intent详解</h2><ul>
-<li><h3 id="Intent简介"><a href="#Intent简介" class="headerlink" title="Intent简介"></a>Intent简介</h3><ul>
-<li><p>Intent 是一个消息传递对象，可以使用它从其他应用组件请求操作，基本的用例主要包括以下三个：</p>
+        <h2 id="OkHttp3-源码"><a href="#OkHttp3-源码" class="headerlink" title="OkHttp3 源码"></a>OkHttp3 源码</h2><h3 id="先了解如何使用"><a href="#先了解如何使用" class="headerlink" title="先了解如何使用"></a>先了解如何使用</h3><a id="more"></a>
 <ul>
-<li><strong>启动Activity</strong>：<ul>
-<li>startActivity()启动,并可以携带数据</li>
-<li>startActivityForResult(),这是启动Activity并可返回数据的一种.</li>
-</ul>
+<li><h4 id="get"><a href="#get" class="headerlink" title="get"></a>get</h4><ul>
+<li><p>同步操作：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">String url=&apos;...&apos;;</span><br><span class="line">OkHttpClient httpClient=new OkHttpClient();</span><br><span class="line"></span><br><span class="line">Request request=new Request.Builder().url(url).build();</span><br><span class="line">Response response=okhttpClient.newCall(request).execute();</span><br><span class="line">String json=response.body().string();</span><br></pre></td></tr></table></figure>
 </li>
-<li><strong>启动服务</strong>：<ul>
-<li>startService(),启动服务执行一次性操作(如下载文件),Intent 描述了要启动的服务,并携带了任何必要的数据.</li>
-</ul>
-</li>
-<li><p><strong>传递广播</strong>：</p>
-<ul>
-<li><p>广播是任何应用均可接受的消息, 可通过Intent传递给sendBroadcast()等方法,可以将广播传递给其他应用.</p>
-<a id="more"></a></li>
-</ul>
+<li><p><strong>异步操作</strong></p>
+<p>  实际上上面这段代码会报错，因为时execute()，意味着同步操作；所以我们一般用enqueue()方法来网络请求；将上面代码最后两行改为：</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">okhttpClient.newCall(request).enqueue(new Callback()&#123;</span><br><span class="line">     @Override</span><br><span class="line">     public void onFailure(Call call, IOException e) &#123;</span><br><span class="line"></span><br><span class="line">     &#125;</span><br><span class="line"></span><br><span class="line">     @Override</span><br><span class="line">     public void onResponse(Call call, Response response) throws IOException &#123;</span><br><span class="line">         String json = response.body().string();</span><br><span class="line">     &#125;</span><br><span class="line">    </span><br><span class="line">&#125;);</span><br></pre></td></tr></table></figure>
 </li>
 </ul>
 </li>
-</ul>
+<li><h4 id="post"><a href="#post" class="headerlink" title="post"></a>post</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">RequestBody requestBody = new FormBody.Builder()</span><br><span class="line">          .add(&quot;1&quot;, &quot;data&quot;)</span><br><span class="line">          .build();       //创建post的数据map</span><br><span class="line">  Request postRequest = new Request.Builder()</span><br><span class="line">          .url(url)</span><br><span class="line">          .post(requestBody)</span><br><span class="line">          .build();</span><br><span class="line">  okHttpClient.newCall(request).enqueue(new Callback() &#123;</span><br><span class="line">      @Override</span><br><span class="line">      public void onFailure(Call call, IOException e) &#123;</span><br><span class="line">          </span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      @Override</span><br><span class="line">      public void onResponse(Call call, Response response) throws IOException &#123;</span><br><span class="line"></span><br><span class="line">      &#125;</span><br><span class="line">  &#125;);</span><br></pre></td></tr></table></figure>
 </li>
-<li><h3 id="Intent类型"><a href="#Intent类型" class="headerlink" title="Intent类型"></a>Intent类型</h3><ul>
-<li><p><strong>显式Intent</strong>:</p>
-<p>  按名称(类名)指定要启动的组件,通常是自己应用的使用显式Intent来启动组件.</p>
-</li>
-<li><p><strong>隐式Intent</strong>:</p>
-<p>  不会指定特定的组件, 而是声明要执行的常规操作, 从而允许其他的应用组件来处理它</p>
-</li>
-<li><p><strong>区别</strong> :</p>
-<ul>
-<li><p>创建显式Intent的时候,系统会立即启动Intent对象中指定的组件.</p>
-</li>
-<li><p>创建隐式Intent的时候,系统会通过将Intent的内容与设备上其他应用的<strong>清单文件</strong>中声明的Intent过滤器进行比较。如果Intent与Intent过滤器匹配，则系统将启动该组件，并向其传递该Intent对象，如果多个Intent过滤器兼容，则系统会显示一个对话框，让用户来选择。</p>
+<li><h4 id="更多请求"><a href="#更多请求" class="headerlink" title="更多请求"></a>更多请求</h4><p>  文件上传、获取响应头以及更多操作可以自行搜索，还有封装工具类；这里就不再啰嗦了，主要以分析源码为主；</p>
 </li>
 </ul>
+<h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
+<li><h4 id="工作流程"><a href="#工作流程" class="headerlink" title="工作流程"></a>工作流程</h4><ol>
+<li>使用OkHttpClient.newCall(request)进行enqueue/execute时，会调用Dispatcher将Call请求进行线程分发；同步异步都会将Call添加到一个双端队列（头尾都可以进出的）；</li>
+<li>都会调用getResponseWithInterceptorChain()方法，进入网络请求</li>
+<li>拦截器责任链模式的处理请求；</li>
+</ol>
+</li>
+<li><h4 id="Dispatcher任务调度"><a href="#Dispatcher任务调度" class="headerlink" title="Dispatcher任务调度"></a>Dispatcher任务调度</h4><p>  任务的分发：主要就是将Call添加到相应的队列中</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private int maxRequests = 64;   //最大并发请求数量</span><br><span class="line">  private int maxRequestsPerHost = 5;   //每个主机最大请求数  private Runnable idleCallback;</span><br></pre></td></tr></table></figure>
+<p>private ExecutorService executorService;  //线程池</p>
+<p>private final Deque<asynccall> readyAsyncCalls = new ArrayDeque&lt;&gt;(); //缓存队列</asynccall></p>
+<p>private final Deque<asynccall> runningAsyncCalls = new ArrayDeque&lt;&gt;();   //正在进行的任务</asynccall></p>
+<p>private final Deque<realcall> runningSyncCalls = new ArrayDeque&lt;&gt;();    //同步请求队列<br>  ​<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- #### Interceptor拦截器</span><br><span class="line">    拦截器的作用很重要：网络请求按照一定顺序，经过多个拦截器处理；</span><br><span class="line"></span><br><span class="line">    优点：将流式工作分解为可配置的分段流程；</span><br></pre></td></tr></table></figure></realcall></p>
+<p>   private Response getResponseWithInterceptorChain() throws IOException {<br>  // Build a full stack of interceptors.<br>  List<interceptor> interceptors = new ArrayList&lt;&gt;();<br>  interceptors.addAll(client.interceptors()); //优先处理自定义拦截器<br>  interceptors.add(retryAndFollowUpInterceptor);  //失败重连拦截器<br>  interceptors.add(new BridgeInterceptor(client.cookieJar())); //接口桥接拦截器（同时处理cookie）<br>  interceptors.add(new CacheInterceptor(client.internalCache()));  //缓存拦截器<br>  interceptors.add(new ConnectInterceptor(client));   //分配链接拦截器，负责与服务器建立连接<br>  if (!retryAndFollowUpInterceptor.isForWebSocket()) {</interceptor></p>
+<pre><code>interceptors.addAll(client.networkInterceptors());
+</code></pre><p>  }<br>  interceptors.add(new CallServerInterceptor(</p>
+<pre><code>retryAndFollowUpInterceptor.isForWebSocket())); //真正连接服务器的网络请求拦截器，向服务器发送请求数据，从服务器读取相应数据
+</code></pre><p>  //责任链模式执行并返回结果<br>  Interceptor.Chain chain = new RealInterceptorChain(</p>
+<pre><code>interceptors, null, null, null, 0, originalRequest);
+</code></pre><p>  return chain.proceed(originalRequest);</p>
+<pre><code>}
+</code></pre>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">接下来时这个责任链如何循环运转的，请看下面proceed方法：</span><br><span class="line"></span><br><span class="line">&gt;我们上面的index=0开始的，所以第一个通常时重定向拦截器；</span><br></pre></td></tr></table></figure>
+<p>  public Response proceed(Request request, StreamAllocation streamAllocation, HttpStream httpStream,</p>
+<pre><code>Connection connection) throws IOException {
+</code></pre><p>  … //省略部分代码</p>
+<p>  RealInterceptorChain next = new RealInterceptorChain(</p>
+<pre><code>interceptors, streamAllocation, httpStream, connection, index + 1, request);    //创建下一个chain
+</code></pre><p>  Interceptor interceptor = interceptors.get(index);  //获取当前的拦截器<br>  Response response = interceptor.intercept(next);    //当前拦截器执行<br>  …</p>
+<p>  return response;</p>
+<pre><code>}
+</code></pre>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. 创建下一个realInterceptorChain，index+1，所以下一个是桥接拦截器；我们先看重定向拦截器是怎么将链传递到下一个拦截器的：</span><br></pre></td></tr></table></figure>
+<pre><code>@Override public Response intercept(Chain chain) throws IOException {
+    Request request = chain.request();  //获得request
+    RealInterceptorChain realChain = (RealInterceptorChain) chain;  //获得要处理的任务
+    Call call = realChain.call();
+    EventListener eventListener = realChain.eventListener();
+
+    streamAllocation = new StreamAllocation(client.connectionPool(), createAddress(request.url()),
+        call, eventListener, callStackTrace);
+
+    int followUpCount = 0;
+    Response priorResponse = null;
+    while (true) {
+      if (canceled) {
+        streamAllocation.release();
+        throw new IOException(&quot;Canceled&quot;);
+      }
+
+      Response response;
+      boolean releaseConnection = true;
+      try {
+        response = realChain.proceed(request, streamAllocation, null, null);    //关键的以一句，这里又调用了proceed方法，然后index+1，就会继续传递
+        releaseConnection = false;
+      } ...
+      //省略大量代码
+
+    }
+  }
+```
+</code></pre><ul>
+<li><p>失败重连以及重定向拦截器：</p>
+<p>  死循环获取response，每次循环获取下一个request，如果没有则返回response，并退出；而获取下一个request是根据上一个response返回的状态码；</p>
+</li>
+<li><p>桥接拦截器</p>
+<ol>
+<li>请求从应用层数据类型转化为网络调用层的数据类型；</li>
+<li>将网络层返回的数据类型转化为应用层数据类型；</li>
+</ol>
+</li>
+<li><p>缓存拦截器</p>
+<ol>
+<li><p>将请求和返回 关联的保存到缓存中；客户端和服务端根据一定机制，在需要时使用缓存的数据作为网络请求的相应，节省了时间和带宽；</p>
+</li>
+<li><p>将Http和Https的网络返回数据缓存到文件系统中；工作原理：客户端发起网络请求，并携带一条时间信息；如果客户端收到响应码304则直接使用缓存数据；否则服务端返回更新的数据；</p>
+</li>
+<li><p>OkHttp3缓存类为Cache类，主要负责缓存文件读写的类时：DisLruCache；缓存接口：InternalCache</p>
+</li>
+</ol>
+</li>
+<li><p>连接拦截器ConnectInterceptor/最后网络请求服务器的拦截器CallServerInterceptor</p>
 </li>
 </ul>
 </li>
-<li><h3 id="构建Intent"><a href="#构建Intent" class="headerlink" title="构建Intent"></a>构建Intent</h3>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">    private static final String ATTR_ACTION = &quot;action&quot;;</span><br><span class="line">private static final String TAG_CATEGORIES = &quot;categories&quot;;</span><br><span class="line">private static final String ATTR_CATEGORY = &quot;category&quot;;</span><br><span class="line">private static final String TAG_EXTRA = &quot;extra&quot;;</span><br><span class="line">private static final String ATTR_TYPE = &quot;type&quot;;</span><br><span class="line">private static final String ATTR_COMPONENT = &quot;component&quot;;</span><br><span class="line">private static final String ATTR_DATA = &quot;data&quot;;</span><br><span class="line">private static final String ATTR_FLAGS = &quot;flags&quot;;</span><br></pre></td></tr></table></figure>
-<ul>
-<li><p><strong>组件名称</strong></p>
-<p>  可选项, 但是构建显示Intent的重要信息, 如果没有那就是隐式的Intent, 那么系统将根据Intent的其他信息(如下面的那些).</p>
-<p>  可以通过<strong>setComponent()</strong>\<strong>setClass</strong>()\<strong>setClassName</strong>()或者Intent构造方法来设置组件名称</p>
-</li>
-<li><p><strong>操作</strong></p>
-<p>  指定要执行的通用操作的<strong>字符串</strong>;<br>  例子:</p>
-<ul>
-<li><p>ACTION_VIEW:</p>
-<p>  如果有某一项Activity可向用户显示的信息,(用图库查看照片), 使用Intent将此操作与startActivity()结合使用</p>
-</li>
-<li><p>ACTION_SEND:</p>
-<p>  “共享”Intent, 如果有一些用户可通过其他应用共享的数据(发给好友或朋友圈), 也是结合startActivity()</p>
-<p>但其实并不止这么少, 还有很多,也可以定义自己的操作,但是确保将<strong>应用的软件包名称</strong>作为前缀。</p>
-<p>可通过setAction()或者Intent的构造方法.</p>
-</li>
-</ul>
-</li>
-<li><p><strong>数据</strong></p>
-<p>  提供的数据类型由Intent的操作决定, 如果操作是ACTION_EDIT, 则数据应包含待编辑文档的URI.</p>
-<p>  除了制定URI意外, 制定数据类型(MIME类型)也很重要.</p>
-<p>  若仅设置URI, 调用setData() ,若仅设置MIME类型, 调用setType(),</p>
+<li><h3 id="发起网络请求"><a href="#发起网络请求" class="headerlink" title="发起网络请求"></a>发起网络请求</h3><p>  实现方法：socket</p>
+<p>  网络请求流程：创建socket；连接网络；进行输入输出流操作</p>
+<p>  前两步都已经封装在connection接口中，具体实现类是RealConnection；</p>
+<p>  输入输出是通过stream接口实现；根据不同的网络协议，有Http1xStream和Http2xStream两个实现类；</p>
 <blockquote>
-<p>若要同时设置URI和MIME , 使用setDataAndType()方法.</p>
+<p>由于创建网络时间较久（如果是Http就要三次握手），而且网络请求时频繁的碎片化的，所以Okhttp3实现了网络的复用；</p>
 </blockquote>
-</li>
-<li><p><strong>类别</strong></p>
-<p>  一个包含应处理Intent组件类型的附加信息的字符串, 可以将任意数量的类别描述放入一个Intent里, 例如:</p>
-<p>  CATEGORY_BROWSABLE:</p>
-<p>  目标Activity允许本身通过网络浏览器启动，以显示链接引用的数据，如图像或电子邮件。</p>
-<p>  CATEGORY_LAUNCHER:</p>
-<p>  该 Activity 是任务的初始 Activity，在系统的应用启动器中列出。</p>
-<p>  可以通过**addCategory()来指定类别。</p>
-<blockquote>
-<p>以上的属性就是Intent的特征, 有了这些特征, 系统就可以知道应该干什么了 .</p>
-</blockquote>
-</li>
-<li><p>但是呢, Intent也可以携带一些其他的信息 , 并不影响系统对它的解析.</p>
-<p>  例如:   </p>
 <ul>
-<li><p>Extra:  </p>
-<p>  也就是常见的putExtra()方法了, 这个方法需要传入两个参数:键名和值, 也可以创建一个包含所有extra数据的Bundle对象, 然后使用putExtras()将Bundle插入Intent中.</p>
-</li>
-<li><p>标志: </p>
-<p>  可以参照一下 <a href="https://developer.android.com/reference/android/content/Intent.html#setFlags(int" target="_blank" rel="noopener">setFlags()</a>)(需要翻 墙哦).</p>
-</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><h3 id="接收隐式Intent"><a href="#接收隐式Intent" class="headerlink" title="接收隐式Intent"></a>接收隐式Intent</h3><p>  清单文件AndroidManifest.xml中使用<intent-filter>元素为每个应用组件声明一个或多个Intent过滤器, 过滤器会根据Intent的信息 通过某一类的Intent.</intent-filter></p>
-<blockquote>
-<p>显示Intent始终会传递个目标, 无论声明了Intent过滤器如何都是如此</p>
-</blockquote>
-<p>  至于如何过滤的, 在文章后面会详细介绍.    </p>
-</li>
-<li><h3 id="使用PendinfIntent"><a href="#使用PendinfIntent" class="headerlink" title="使用PendinfIntent"></a>使用PendinfIntent</h3><p>  PendingIntent对象是Intent的包装器, 目的就是授权外部应用使用包含的Intent, 就像它从你应用本身的进程执行一样</p>
-<p>  使用案例:</p>
-<ul>
-<li><strong>通知</strong>执行操作的Intent</li>
-<li><strong>应用小部件</strong></li>
-<li><strong>某一特定时间要执行的Intent</strong></li>
-</ul>
-</li>
-</ul>
-<hr>
-<ul>
-<li><h3 id="Intent-过滤器："><a href="#Intent-过滤器：" class="headerlink" title="Intent 过滤器："></a>Intent 过滤器：</h3><ul>
-<li><p>过滤器的官方源代码如下:</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">&lt;activity android:name=&quot;MainActivity&quot;&gt;</span><br><span class="line">    &lt;!-- This activity is the main entry, should appear in app launcher --&gt;</span><br><span class="line">    &lt;intent-filter&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.MAIN&quot; /&gt;</span><br><span class="line">        &lt;category android:name=&quot;android.intent.category.LAUNCHER&quot; /&gt;</span><br><span class="line">    &lt;/intent-filter&gt;</span><br><span class="line">&lt;/activity&gt;</span><br><span class="line"></span><br><span class="line">&lt;activity android:name=&quot;ShareActivity&quot;&gt;</span><br><span class="line">    &lt;!-- This activity handles &quot;SEND&quot; actions with text data --&gt;</span><br><span class="line">    &lt;intent-filter&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.SEND&quot;/&gt;</span><br><span class="line">        &lt;category android:name=&quot;android.intent.category.DEFAULT&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;text/plain&quot;/&gt;</span><br><span class="line">    &lt;/intent-filter&gt;</span><br><span class="line">    &lt;!-- This activity also handles &quot;SEND&quot; and &quot;SEND_MULTIPLE&quot; with media data --&gt;</span><br><span class="line">    &lt;intent-filter&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.SEND&quot;/&gt;</span><br><span class="line">        &lt;action android:name=&quot;android.intent.action.SEND_MULTIPLE&quot;/&gt;</span><br><span class="line">        &lt;category android:name=&quot;android.intent.category.DEFAULT&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;application/vnd.google.panorama360+jpg&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;image/*&quot;/&gt;</span><br><span class="line">        &lt;data android:mimeType=&quot;video/*&quot;/&gt;</span><br><span class="line">    &lt;/intent-filter&gt;</span><br><span class="line">&lt;/activity&gt;</span><br></pre></td></tr></table></figure>
-<p>第二个 Activity ShareActivity 旨在便于共享文本和媒体内容。 尽管用户可以通过从 MainActivity 导航进入此 Activity，但也可以从发出隐式 Intent（与两个 Intent 过滤器之一匹配）的另一应用中直接进入 ShareActivity。</p>
-<blockquote>
-<p>注：MIME 类型 application/vnd.google.panorama360+jpg 是一个指定全景照片的特殊数据类型，您可以使用 Google panorama API 对其进行处理。</p>
-</blockquote>
+<li>网络复用：<ol>
+<li>新建的连接Connection会存放到缓存池ConnectionPool中；网络连接完成后不会立即释放，而是存货一段时间；网络存活时，若有相同连接，则复用来进行输入输出</li>
+<li>统计每个Connection上发起网络请求的次数，若次数为0，则一段时间后释放该链接。</li>
+<li>每个网络请求对应一个Stream、Connection、ConnectionPool等数据，封装为StreamAllocation（SA）对象；</li>
+<li>RealConnection中会有一个StreamAllocation列表，每次创建连接时都会+1（弱引用）；以下情况-1（网络请求完成；发生异常；重定向（释放原来的创建新的）；重定向次数超过20；网络返回信息头有（Connection：close）；网络返回数据信息长度未知，则相应的Connection不在分配Stream；</li>
+</ol>
 </li>
 </ul>
 </li>
 </ul>
-<h3 id="Intent的解析"><a href="#Intent的解析" class="headerlink" title="Intent的解析"></a>Intent的解析</h3><p>Intent解析机制主要是通过查找已注册在AndroidManifest.xml中的所有<intent-filter>及其中定义的Intent，通过PackageManager（注：PackageManager能够得到当前设备上所安装的<br>application package的信息）来查找能处理这个Intent的component。在这个解析过程中，Android是通过Intent的action、type、category这三个属性来进行判断的，</intent-filter></p>
-<ul>
-<li><p><strong>匹配法则</strong></p>
-<ul>
-<li>如果Intent指明定了action，则目标组件的IntentFilter的action列表中就必须包含有这个action，否则不能匹配；</li>
-<li><p>如果Intent没有提供type，系统将从data中得到数据类型。和action一样，目标组件的数据类型列表中必须包含Intent的数据类型，否则不能匹配。</p>
+<h3 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h3><ul>
+<li><p>外观模式</p>
+<p>  OkHttpClient组合了很多的类对象，让这个类单独提供对外开放的API</p>
 </li>
-<li><p>如果Intent中的数据不是content:类型的URI，而且Intent也没有明确指定type，将根据Intent中数据的scheme（比如 http:或者mailto:）进行匹配。同上，Intent 的scheme必须出现在目标组件的scheme列表中。</p>
+<li><p>Builder模式</p>
+<p>  由于内部功能模块很多，所以使用Builder（生成者模式）构造OkHttpClient</p>
 </li>
-<li><p>如果Intent指定了一个或多个category，这些类别必须全部出现在组建的类别列表中。比如Intent中包含了两个类别：LAUNCHER_CATEGORY和ALTERNATIVE_CATEGORY，解析得到的目标组件必须至少包含这两个类别。</p>
+<li><p>工厂模式  </p>
+<p>  Call里面提供工厂接口，OkHttpClient实现了Call.Factory的newCall方法</p>
+</li>
+<li><p>责任链模式</p>
+<p>  拦截器Interceptor的链式拦截</p>
 </li>
 </ul>
-</li>
-</ul>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><p><a href="https://www.jianshu.com/p/dd412b8ba43f" target="_blank" rel="noopener">https://www.jianshu.com/p/dd412b8ba43f</a></p>
 
       
     </div>
@@ -548,7 +548,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Intent/" rel="tag"># Intent</a>
+            <a href="/tags/OkHttp3/" rel="tag"># OkHttp3</a>
           
         </div>
       
@@ -561,8 +561,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/12/31/无聊学习Python——每日必应换壁纸/" rel="next" title="无聊学习Python——每日必应换壁纸">
-                <i class="fa fa-chevron-left"></i> 无聊学习Python——每日必应换壁纸
+              <a href="/2017/12/31/自己动手做一个WanAndroid客户端/" rel="next" title="自己动手做一个WanAndroid客户端">
+                <i class="fa fa-chevron-left"></i> 自己动手做一个WanAndroid客户端
               </a>
             
           </div>
@@ -571,8 +571,8 @@
 
           <div class="post-nav-prev post-nav-item">
             
-              <a href="/2017/12/31/Java 设计模式——单例模式详解/" rel="prev" title="Java 设计模式——单例模式详解">
-                Java 设计模式——单例模式详解 <i class="fa fa-chevron-right"></i>
+              <a href="/2018/01/20/jvm 快速阅读笔记/" rel="prev" title="JVM 快速阅读笔记">
+                JVM 快速阅读笔记 <i class="fa fa-chevron-right"></i>
               </a>
             
           </div>
@@ -756,7 +756,7 @@ var jiathis_config={
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-Intent详解"><span class="nav-number">1.</span> <span class="nav-text">Android Intent详解</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent简介"><span class="nav-number">1.1.</span> <span class="nav-text">Intent简介</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent类型"><span class="nav-number">1.2.</span> <span class="nav-text">Intent类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#构建Intent"><span class="nav-number">1.3.</span> <span class="nav-text">构建Intent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#接收隐式Intent"><span class="nav-number">1.4.</span> <span class="nav-text">接收隐式Intent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用PendinfIntent"><span class="nav-number">1.5.</span> <span class="nav-text">使用PendinfIntent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent-过滤器："><span class="nav-number">1.6.</span> <span class="nav-text">Intent 过滤器：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Intent的解析"><span class="nav-number">1.7.</span> <span class="nav-text">Intent的解析</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OkHttp3-源码"><span class="nav-number">1.</span> <span class="nav-text">OkHttp3 源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#先了解如何使用"><span class="nav-number">1.1.</span> <span class="nav-text">先了解如何使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#get"><span class="nav-number">1.1.1.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#post"><span class="nav-number">1.1.2.</span> <span class="nav-text">post</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更多请求"><span class="nav-number">1.1.3.</span> <span class="nav-text">更多请求</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#工作流程"><span class="nav-number">1.2.1.</span> <span class="nav-text">工作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dispatcher任务调度"><span class="nav-number">1.2.2.</span> <span class="nav-text">Dispatcher任务调度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发起网络请求"><span class="nav-number">1.3.</span> <span class="nav-text">发起网络请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">1.4.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">1.5.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
             
 
           </div>
