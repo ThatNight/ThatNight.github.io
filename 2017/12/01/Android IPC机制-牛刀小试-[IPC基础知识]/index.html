@@ -1,0 +1,1105 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="IPC," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="前言觉得自己已经大二下学期了， Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。  简介  IPC：Inter-Process Communication，简称：进程间的通信。  进程和线程">
+<meta name="keywords" content="IPC">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android IPC机制-牛刀小试-[IPC基础知识]">
+<meta property="og:url" content="https://thatnight.github.io/2017/12/01/Android IPC机制-牛刀小试-[IPC基础知识]/index.html">
+<meta property="og:site_name" content="ThatNight&#39;s Blog">
+<meta property="og:description" content="前言觉得自己已经大二下学期了， Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。  简介  IPC：Inter-Process Communication，简称：进程间的通信。  进程和线程">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://img.blog.csdn.net/20170418181657341?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+<meta property="og:updated_time" content="2018-01-26T13:36:44.396Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android IPC机制-牛刀小试-[IPC基础知识]">
+<meta name="twitter:description" content="前言觉得自己已经大二下学期了， Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。  简介  IPC：Inter-Process Communication，简称：进程间的通信。  进程和线程">
+<meta name="twitter:image" content="http://img.blog.csdn.net/20170418181657341?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://thatnight.github.io/2017/12/01/Android IPC机制-牛刀小试-[IPC基础知识]/"/>
+
+
+
+
+
+  <title>Android IPC机制-牛刀小试-[IPC基础知识] | ThatNight's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?74f1a8bbc0e841e49924177b36e02d9a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ThatNight's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">那时候坚持不懈的我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://thatnight.github.io/2017/12/01/Android IPC机制-牛刀小试-[IPC基础知识]/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ThatNight">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ThatNight's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android IPC机制-牛刀小试-[IPC基础知识]</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-01T20:19:51+08:00">
+                2017-12-01
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/IPC/" itemprop="url" rel="index">
+                    <span itemprop="name">IPC</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/12/01/Android IPC机制-牛刀小试-[IPC基础知识]/" class="leancloud_visitors" data-flag-title="Android IPC机制-牛刀小试-[IPC基础知识]">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><h5 id="觉得自己已经大二下学期了，-Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。"><a href="#觉得自己已经大二下学期了，-Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。" class="headerlink" title="觉得自己已经大二下学期了， Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。"></a>觉得自己已经大二下学期了， Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。</h5><hr>
+<ul>
+<li><h2 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h2><p>  <strong>IPC</strong>：Inter-Process Communication，简称：进程间的通信。</p>
+<ul>
+<li><p>进程和线程</p>
+<ul>
+<li><p>进程：一个执行单元，一个程序、应用。</p>
+</li>
+<li><p>线程：CPU调度最小单元。</p>
+</li>
+</ul>
+<blockquote>
+<p>注: 任何操作系统都会有IPC机制。</p>
+</blockquote>
+<a id="more"></a>
+</li>
+</ul>
+</li>
+<li><h2 id="需要了解的知识"><a href="#需要了解的知识" class="headerlink" title="需要了解的知识"></a>需要了解的知识</h2><ul>
+<li><h3 id="多进程"><a href="#多进程" class="headerlink" title="多进程"></a>多进程</h3><ul>
+<li><h4 id="开启多进程："><a href="#开启多进程：" class="headerlink" title="开启多进程："></a>开启多进程：</h4><p>  这里的多进程是指一个应用中有多个进程。</p>
+<p>  首先我们就先创建两个进程吧，在AndroidManifest.xml中对四大组件<strong>使用android:process属性</strong>, 除此之外没有别的方法, 其实是有的(通过JNI在native层去fork一个新的进程),只不过太复杂了.</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">&lt;activity</span><br><span class="line">    android:name=&quot;com.thatnight.MainActivity&quot;</span><br><span class="line">    ...</span><br><span class="line">    android:process=&quot;:remote&quot;/&gt;</span><br><span class="line">                </span><br><span class="line">&lt;activity</span><br><span class="line">    android:name=&quot;com.thatnight.SecondActivity&quot;</span><br><span class="line">    ...</span><br><span class="line">    android:process=&quot;com.thatnight.remote&quot;</span><br><span class="line">    /&gt;</span><br></pre></td></tr></table></figure>
+<p>  通过上面的android:process的属性, 分别为MainAcitivity和SecondActivity设置了两个进程, 一个是”com.thatnight:remote”, 另一个是”com.thatnight.remote”</p>
+<p>  上面的”:remote”和”.remote”是有区别的</p>
+<p>  <strong>:remote</strong> : 当前的进程名前面附加当前的报名, 并且表示当前的进程是私有进程, 其他应用组件不可以跑到他的进程中.<strong>属于全局进程</strong>.</p>
+</li>
+<li><h4 id="多线程模式的运行机制"><a href="#多线程模式的运行机制" class="headerlink" title="多线程模式的运行机制:"></a>多线程模式的运行机制:</h4><p>  首先我们开启两个进程, 就犹如上面的MainActivity和SecondActivity,下面先新建一个类, UserManager</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public class UserManager&#123;</span><br><span class="line">    public static int sUserId=1;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  我们在MainActivity的onCreate()方法把这个 id改成2, 那么再启动SecondActivity的onCreate()方法打印出来,结果是:</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sUserId=2;</span><br></pre></td></tr></table></figure>
+<p>  <strong>为什么呢?</strong></p>
+<p>  <strong>答:</strong> SecondActivity运行在一个单独的进程, Android为每个进程都分配一个独立的虚拟机, <strong>不同的虚拟机在内存分配上有不同的地址空间</strong>.</p>
+<p>  <strong>总结:</strong> 多进程会造成如下几方面的问题<br>  ​    </p>
+<ol>
+<li><p>静态成员和单例模式完全失效</p>
+</li>
+<li><p>线程同步机制完全失效</p>
+</li>
+<li><p>SharedPreferences的可靠性下降: SharedPreferences不支持两个进程同时去执行写操作</p>
+</li>
+<li><p>Application会多次创建: 当一个组件跑在新进程,相当于启动一个应用,所以会创建Application.</p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+</li>
+<li><h2 id="基础概念介绍"><a href="#基础概念介绍" class="headerlink" title="基础概念介绍"></a>基础概念介绍</h2><ul>
+<li><h3 id="Serializable接口"><a href="#Serializable接口" class="headerlink" title="Serializable接口"></a>Serializable接口</h3><p>  这是一个Java提供的序列化接口, 使用起来相当简单,**只需要在类中声明指定一个类似下面的标识, 即可自动实现默认的序列化:</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">public class Book implements  Serializable &#123;</span><br><span class="line"></span><br><span class="line">    private static final long serialVersionUID=8711368828010083044L;</span><br><span class="line"></span><br><span class="line">    private String name;</span><br><span class="line">    private String author;</span><br><span class="line"></span><br><span class="line">    public String getName() &#123;</span><br><span class="line">        return name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setName(String name) &#123;</span><br><span class="line">        this.name = name;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public String getAuthor() &#123;</span><br><span class="line">        return author;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public void setAuthor(String author) &#123;</span><br><span class="line">        this.author = author;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h3 id="Parcelable接口"><a href="#Parcelable接口" class="headerlink" title="Parcelable接口"></a>Parcelable接口</h3><p>  直接上代码吧!</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">public class Book implements Parcelable &#123;</span><br><span class="line"></span><br><span class="line">    private String name;</span><br><span class="line">    private String author;</span><br></pre></td></tr></table></figure>
+<pre><code>public Book(){
+
+}
+
+protected Book(Parcel in) {
+    name = in.readString();
+    author = in.readString();
+}
+
+public static final Creator&lt;Book&gt; CREATOR = new Creator&lt;Book&gt;() {
+    @Override
+    public Book createFromParcel(Parcel in) {
+        return new Book(in);
+    }
+
+    @Override
+    public Book[] newArray(int size) {
+        return new Book[size];
+    }
+};
+
+public String getName() {
+    return name;
+}
+
+public void setName(String name) {
+    this.name = name;
+}
+
+public String getAuthor() {
+    return author;
+}
+
+@Override
+public int describeContents() {
+    return 0;
+}
+
+@Override
+public void writeToParcel(Parcel dest, int flags) {
+    dest.writeString(name);
+    dest.writeString(author);
+}
+</code></pre><p>  }<br>  ```<br>  序列化的功能由writeToParcel方法来完成, 最终通过Pacel中的一系列write方法来完成;</p>
+<p>  反序列化由CREATOR来完成, 通过一系列Pacel的read方法来完成反序列.</p>
+<p>  describeContents: 内容描述功能,一般返回0.</p>
+<blockquote>
+<p>提示: Serializable接口是Java的, 用起来简单但是开销很大, 所以不适合,然后就有,  ==Parcelable是Android的序列化方式==, 所以我们首选Parcelable接口, 虽然有点复杂.</p>
+</blockquote>
+</li>
+<li><h3 id="Binder"><a href="#Binder" class="headerlink" title="Binder"></a>Binder</h3><p>  首先这个的发音, 一开始我读:冰的, 后来师兄说了下是:拜的,我就百度了下</p>
+<p>  binder    英[ˈbaɪndə(r)]    美[ˈbaɪndɚ]  —&gt; 拜的<br>  ​<br>  <strong>Binder简单来说就是一个类, 实现了IBinder接口.</strong></p>
+<p>  Binder这个东西还真的是有点难以理解, 很是复杂, 所以我看了很多天.那我先简单地步骤解释:</p>
+<ol>
+<li><h5 id="首先创建AIDL的流程-我之前有写-AIDL详解"><a href="#首先创建AIDL的流程-我之前有写-AIDL详解" class="headerlink" title="首先创建AIDL的流程, 我之前有写:   AIDL详解"></a>首先创建AIDL的流程, 我之前有写:   <a href="http://blog.csdn.net/williamchew/article/details/65662904" target="_blank" rel="noopener">AIDL详解</a></h5></li>
+<li><h5 id="打开app-build-generated-source-aidl-debug-com-rcd-democomponents目录下的BookManager-java"><a href="#打开app-build-generated-source-aidl-debug-com-rcd-democomponents目录下的BookManager-java" class="headerlink" title="打开app\build\generated\source\aidl\debug\com\rcd\democomponents目录下的BookManager.java"></a>打开app\build\generated\source\aidl\debug\com\rcd\democomponents目录下的BookManager.java</h5><p> 代码十分的长, 大家可以整理一下代码再看.</p>
+</li>
+<li><h5 id="Binder的工作机制"><a href="#Binder的工作机制" class="headerlink" title="Binder的工作机制"></a>Binder的工作机制</h5><p> <img src="http://img.blog.csdn.net/20170418181657341?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQvd2lsbGlhbWNoZXc=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt="这里写图片描述"></p>
+<p> 关于Binder呢,我这里不详细讲了, 篇幅有限,还是给更多的时间去了解一下IPC机制比较好.</p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li><h2 id="Android中的IPC方式"><a href="#Android中的IPC方式" class="headerlink" title="Android中的IPC方式"></a>Android中的IPC方式</h2><ul>
+<li><h3 id="选择合适的IPC方式"><a href="#选择合适的IPC方式" class="headerlink" title="选择合适的IPC方式"></a>选择合适的IPC方式</h3><p>  | 名称              | 优点                                       | 缺点                                       | 使用场景                                |<br>  | ————— | —————————————- | —————————————- | ———————————– |<br>  | Bundle          | 简单易用                                     | 只能传输Bundle                               | 四大组件的进程间通信                          |<br>  | 文件分享            | 简单易用                                     | 不适合高并发场景,并且无法做到进程间的即时通信                  | 无并发访问交换简单的数据实时性不高的场景                |<br>  | AIDL            | 功能强大,支持一对多发通信, 支持实时通讯                    | 使用复杂,需要处理好线程同步                           | 一对多通信且有RPC需求                        |<br>  | Messenger       | 功能一般,支持一对多串行通信,支持实时通信                    | 不能很好处理高并发清醒,不支持RPC,数据通过Message进行传输,只能传输Bundle | 低并发的一对多即时通信, 无RPC需求,或者无需要返回结果的RPC需求 |<br>  | ContentProvider | 在数据源访问页面功能强大,支持一对多并发数据共享,可通过Call方法扩展其他操作 | 受约束的AIDL,主要提供数据操作                        | 一对多的进程间通信                           |<br>  | Socket          | 功能强大,可以通过网络传输字节流,支持一对多                   | 细节稍微繁琐,不支持直接的RPC                         | 网络数据交换                              |</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<ul>
+<li><h2 id="未完待续"><a href="#未完待续" class="headerlink" title="未完待续"></a>未完待续</h2><h4 id="此篇文章主要了解一下Android的IPC机制的基础知识-下一篇文章将会详细介绍IPC的方式"><a href="#此篇文章主要了解一下Android的IPC机制的基础知识-下一篇文章将会详细介绍IPC的方式" class="headerlink" title="此篇文章主要了解一下Android的IPC机制的基础知识,下一篇文章将会详细介绍IPC的方式."></a>此篇文章主要了解一下Android的IPC机制的基础知识,下一篇文章将会详细介绍IPC的方式.</h4></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>感谢阅读,您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="ThatNight 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="ThatNight 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/IPC/" rel="tag"># IPC</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/31/Android 退出其他Activity/" rel="next" title="Android 退出其他Activity">
+                <i class="fa fa-chevron-left"></i> Android 退出其他Activity
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/23/Android 蓝牙五子棋[可人机对战]/" rel="prev" title="蓝牙五子棋[可人机对战]">
+                蓝牙五子棋[可人机对战] <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMzAwMy85NTY1"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4"
+                alt="ThatNight" />
+            
+              <p class="site-author-name" itemprop="name">ThatNight</p>
+              <p class="site-description motion-element" itemprop="description">前进, 莫回头.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">18</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">9</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/thatnight" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/Williamschew/activities" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#觉得自己已经大二下学期了，-Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。"><span class="nav-number">1.0.0.1.</span> <span class="nav-text">觉得自己已经大二下学期了， Android方面的知识仍然是停滞不前，明年就要去找实习了，感觉十分的虚，项目也做得差差不多，总感觉自己在做重复的东西，学到的东西不是很多，所以最近买了本《安卓开发艺术》，据说这本书是进阶用的，所以我打算研读这本书，这本书里的知识基本是面试所问的基础知识。</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#简介"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#需要了解的知识"><span class="nav-number">3.</span> <span class="nav-text">需要了解的知识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#多进程"><span class="nav-number">3.1.</span> <span class="nav-text">多进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#开启多进程："><span class="nav-number">3.1.1.</span> <span class="nav-text">开启多进程：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多线程模式的运行机制"><span class="nav-number">3.1.2.</span> <span class="nav-text">多线程模式的运行机制:</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基础概念介绍"><span class="nav-number">4.</span> <span class="nav-text">基础概念介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Serializable接口"><span class="nav-number">4.1.</span> <span class="nav-text">Serializable接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Parcelable接口"><span class="nav-number">4.2.</span> <span class="nav-text">Parcelable接口</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Binder"><span class="nav-number">4.3.</span> <span class="nav-text">Binder</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#首先创建AIDL的流程-我之前有写-AIDL详解"><span class="nav-number">4.3.0.1.</span> <span class="nav-text">首先创建AIDL的流程, 我之前有写:   AIDL详解</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#打开app-build-generated-source-aidl-debug-com-rcd-democomponents目录下的BookManager-java"><span class="nav-number">4.3.0.2.</span> <span class="nav-text">打开app\build\generated\source\aidl\debug\com\rcd\democomponents目录下的BookManager.java</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Binder的工作机制"><span class="nav-number">4.3.0.3.</span> <span class="nav-text">Binder的工作机制</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Android中的IPC方式"><span class="nav-number">5.</span> <span class="nav-text">Android中的IPC方式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#选择合适的IPC方式"><span class="nav-number">5.1.</span> <span class="nav-text">选择合适的IPC方式</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#未完待续"><span class="nav-number">6.</span> <span class="nav-text">未完待续</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#此篇文章主要了解一下Android的IPC机制的基础知识-下一篇文章将会详细介绍IPC的方式"><span class="nav-number">6.0.1.</span> <span class="nav-text">此篇文章主要了解一下Android的IPC机制的基础知识,下一篇文章将会详细介绍IPC的方式.</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ThatNight</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("rNGy7xuMe8xVYBpzyk6gRnfd-gzGzoHsz", "RscD6Blam0yUUGbO55M3F0Q5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
