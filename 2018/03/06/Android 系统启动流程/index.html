@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+
+
+
+
+<html class="theme-next gemini" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.4" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.ico?v=5.1.4">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.ico?v=5.1.4">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.4" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Android 系统启动流程," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Android 系统启动流程 本文基于Android 7.0分析  流程 BootLoader加载(系统开始前的一个小程序，将OS拉起来并运行) Kernel加载（文件系统挂载，init进程启动，设备初始化服务） init进程启动（解析init.rc） Zygote进程启动 SystemServer启动服务(AMS,PMS,WMS,PowerMS,AccoutMS,IputMethodMS…)">
+<meta name="keywords" content="Android 系统启动流程">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Android 系统启动流程">
+<meta property="og:url" content="https://thatnight.github.io/2018/03/06/Android 系统启动流程/index.html">
+<meta property="og:site_name" content="ThatNight&#39;s Blog">
+<meta property="og:description" content="Android 系统启动流程 本文基于Android 7.0分析  流程 BootLoader加载(系统开始前的一个小程序，将OS拉起来并运行) Kernel加载（文件系统挂载，init进程启动，设备初始化服务） init进程启动（解析init.rc） Zygote进程启动 SystemServer启动服务(AMS,PMS,WMS,PowerMS,AccoutMS,IputMethodMS…)">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://gityuan.com/images/boot/zygote/zygote_process.jpg">
+<meta property="og:image" content="http://gityuan.com/images/boot/systemServer/system_server.jpg">
+<meta property="og:image" content="http://gityuan.com/images/boot/systemServer/system_server_boot_process.jpg">
+<meta property="og:updated_time" content="2018-03-06T11:40:31.133Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Android 系统启动流程">
+<meta name="twitter:description" content="Android 系统启动流程 本文基于Android 7.0分析  流程 BootLoader加载(系统开始前的一个小程序，将OS拉起来并运行) Kernel加载（文件系统挂载，init进程启动，设备初始化服务） init进程启动（解析init.rc） Zygote进程启动 SystemServer启动服务(AMS,PMS,WMS,PowerMS,AccoutMS,IputMethodMS…)">
+<meta name="twitter:image" content="http://gityuan.com/images/boot/zygote/zygote_process.jpg">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    version: '5.1.4',
+    sidebar: {"position":"left","display":"always","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":false,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="https://thatnight.github.io/2018/03/06/Android 系统启动流程/"/>
+
+
+
+
+
+  <title>Android 系统启动流程 | ThatNight's Blog</title>
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?74f1a8bbc0e841e49924177b36e02d9a";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">ThatNight's Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">那时候坚持不懈的我</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://thatnight.github.io/2018/03/06/Android 系统启动流程/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="ThatNight">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="ThatNight's Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Android 系统启动流程</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-06T19:30:49+08:00">
+                2018-03-06
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Android-FrameWork/" itemprop="url" rel="index">
+                    <span itemprop="name">Android FrameWork</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/06/Android 系统启动流程/" class="leancloud_visitors" data-flag-title="Android 系统启动流程">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Android-系统启动流程"><a href="#Android-系统启动流程" class="headerlink" title="Android 系统启动流程"></a>Android 系统启动流程</h2><blockquote>
+<p>本文基于Android 7.0分析</p>
+</blockquote>
+<h3 id="流程"><a href="#流程" class="headerlink" title="流程"></a>流程</h3><ol>
+<li>BootLoader加载(系统开始前的一个小程序，将OS拉起来并运行)</li>
+<li>Kernel加载（文件系统挂载，init进程启动，设备初始化服务）</li>
+<li>init进程启动（解析init.rc）</li>
+<li>Zygote进程启动</li>
+<li>SystemServer启动服务(AMS,PMS,WMS,PowerMS,AccoutMS,IputMethodMS…)</li>
+</ol>
+<ul>
+<li><p>不过我们一般都是直接从下面的过程开始：</p>
+<p>  init-&gt;Zygote-&gt;SystemServer-&gt;应用程序</p>
+  <a id="more"></a>
+</li>
+</ul>
+<h3 id="init进程"><a href="#init进程" class="headerlink" title="init进程"></a>init进程</h3><ul>
+<li><h4 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h4><ol>
+<li>创建一些文件夹挂载设备</li>
+<li>初始化和启动属性服务</li>
+<li>解析init.rc配置文件并启动Zygote进程</li>
+</ol>
+</li>
+<li><p>init.rc：内部由Android初始化语言编写的脚本，一个配置文件；</p>
+</li>
+<li>解析Service：解析service的rc文件，创建出Service对象，根据选项域的内容填充Service对象，最后将Service加入到vector类型的Service链表中；</li>
+<li>init启动Zygote:解析init.zygote.rc文件创建的，对应的源文件是App_main.cpp，主要是调用AppRuntime的start方法来启动Zygote的</li>
+<li>属性服务：类似Windows的注册表，采用键值对来记录软件的一些信息，系统或软件重启时会根据这些信息进行初始化工作；==这里面会创建一个非阻塞的Socket给最多8个试图设置属性的用户提供服务；</li>
+</ul>
+<h3 id="Zygote"><a href="#Zygote" class="headerlink" title="Zygote"></a>Zygote</h3><ul>
+<li><h4 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h4><p>  Android系统中DVM、应用程序进程以及运行系统的关键服务的SystemServer进程都是由Zygote进程来创建的，所以也被称为‘孵化器’；通过fork（复制进程）的形式来创建应用程序进程和SystemServer进程的；</p>
+<p>  由于Zygote启动时会启动DVM（Dalvik），因此通过fork而创建的进程可以在内部获取一个DVM的实例拷贝；</p>
+<p>  <img src="http://gityuan.com/images/boot/zygote/zygote_process.jpg" alt=""></p>
+</li>
+<li><h4 id="AppRuntime"><a href="#AppRuntime" class="headerlink" title="AppRuntime"></a>AppRuntime</h4><p>  在init进程的最后会调用AppRuntime的start方法启动Zygote的；</p>
+<ul>
+<li>AppRuntime 主要工作<ul>
+<li>创建Android运行时环境</li>
+<li>启动SystemServer<br>App Runtime继承于AndroidRuntime，所以着重于AndroidRuntime；</li>
+</ul>
+</li>
+<li>AndroidRuntime主要工作<ul>
+<li>启动Java Dalvik虚拟机，并设置虚拟机相关参数</li>
+<li>注册JNI函数，后续Java世界用到的一些函数都是采用native方式来实现的</li>
+<li>调用ZygoteInit.main方法正式进入Java世界</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h4 id="ZygoteInit-main"><a href="#ZygoteInit-main" class="headerlink" title="ZygoteInit.main"></a>ZygoteInit.main</h4><ul>
+<li><h4 id="总结-1"><a href="#总结-1" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>创建IPC通信的Socket</li>
+<li>预加载类和资源</li>
+<li>启动SystemServer</li>
+<li>监听其他进程发出来的请求</li>
+</ul>
+</li>
+<li><h4 id="registerZygoteSocket"><a href="#registerZygoteSocket" class="headerlink" title="registerZygoteSocket"></a>registerZygoteSocket</h4><p>  创建Local Server Socket，也就是服务端的Socket；当SystemServer启动后，这个Socket等待ActivityManagerService请求Zygote进程来创建新的应用程序进程；</p>
+</li>
+<li><h4 id="启动SystemService"><a href="#启动SystemService" class="headerlink" title="启动SystemService"></a>启动SystemService</h4><ul>
+<li>创建一个String类的args数组：保存启动SystemServer的参数，进程的用户id和用户组id被设置为1000；并且拥有用户组1001~1010、1018、1021、1032、3001~3010的权限；</li>
+<li>将args数组封装成Arguments对象并被forkSystemServer函数调用；</li>
+<li>forkSystemServer：通过fork创建一个子进程，如果返回的pid（process id）为0，表示在新创建的子进程执行；</li>
+<li>调用handleSystemServerProcess启动SystemServer进程；</li>
+</ul>
+</li>
+<li><h4 id="runSelectLoop"><a href="#runSelectLoop" class="headerlink" title="runSelectLoop"></a>runSelectLoop</h4><p>  启动SystemServer后，最后进入runSelectLoop函数</p>
+<ul>
+<li>调用第一步注册的socket.getFileDescriptor()来获得Socket的fd字段的值并添加在fd列表fds中；</li>
+<li>无限循环等待ActivityManagerService请求Zygote进程来创建新的应用程序</li>
+<li><p>遍历将fds存储的信息转到pollFds数组中，最后在进行对pollFds遍历，如果i==0则说明服务端Socket与客户端连接上了，也就是当前Zygote进程与ActivityManagerService建立了连接；</p>
+</li>
+<li><p>然后调用acceptCommandPeer得到ZygoteConnection类添加到Socket连接表peers中，接着将该Zygote Connection的fd添加到fd列表fds中；以便可以接收到ActivityManagerService发送过来的请求；</p>
+</li>
+<li><p>如果i&gt;0则说明AMS向Zygote进程发送了一个创建应用进程的请求，然后调用ZygoteConnection的runOnce函数来创建一个新的进程，并成功创建后将这个连接从Socket连接列表peers和fd列表fds中清除；</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h4 id="总结-2"><a href="#总结-2" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>创建AppRuntime并调用start启动Zygote进程</li>
+<li>创建DVM并为DVM注册JNI环境</li>
+<li>通过JNI调用ZygoteInit的main函数进入Zygote的java框架层</li>
+<li>通过registerZygoteSocket创建服务端socket，通过runSelectLoop函数等待AMS的请求来创建新的进程</li>
+<li>启动System Server进程</li>
+</ul>
+</li>
+</ul>
+<h3 id="SystemServer"><a href="#SystemServer" class="headerlink" title="SystemServer"></a>SystemServer</h3><ul>
+<li><h4 id="简介-1"><a href="#简介-1" class="headerlink" title="简介"></a>简介</h4><p>  Android系统几乎所有核心的Service都在这个进程中，启动流程如下：<br>  <img src="http://gityuan.com/images/boot/systemServer/system_server.jpg" alt=""></p>
+<p>  紫色的运行在Zygote的进程，蓝色的是运行在新创建的system_server，这是fork机制实现的（fork会返回2次）；</p>
+</li>
+<li><h4 id="流程-1"><a href="#流程-1" class="headerlink" title="流程"></a>流程</h4><ol>
+<li><p>Zygote启动SystemServer进程<br> 上面Zygote也讲了，在startSystemServer中调用了handleSystemServerProcess来启动；</p>
+<blockquote>
+<p>如果创建system_server失败时，需要重启zygote进程；对于5.0以上的系统，有两个Zygote进程（Zygote、Zygote64），一般来说64位系统的父进程时Zygote64进程；</p>
+<ol>
+<li>当kill system_server，至重启Zygote64和system_server;</li>
+<li>当kill zygote64，同上</li>
+<li>当kill zygote，则重启全部进程</li>
+</ol>
+</blockquote>
+</li>
+<li><p>handleSystemServerProcess方法流程</p>
+<ol>
+<li>SystemServer进程是fork了Zygote进程的地址空间，因此也会得到Zygote的Socket，这个socket对SystemServer没有用处，所以要关闭该socket；</li>
+<li>调用RuntimeInit的zygoteInit函数，里面调用了nativeZygoteInit，主要初始化Zygote</li>
+</ol>
+</li>
+<li><p>启动Binder线程池</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">   public static final void zygoteInit(int targetSdkVersion, String[] argv, ClassLoader classLoader)</span><br><span class="line">    throws ZygoteInit.MethodAndArgsCaller &#123;</span><br><span class="line">    if (DEBUG) Slog.d(TAG, &quot;RuntimeInit: Starting application from zygote&quot;);</span><br><span class="line">    Trace.traceBegin(Trace.TRACE_TAG_ACTIVITY_MANAGER, &quot;RuntimeInit&quot;);</span><br><span class="line">    redirectLogStreams();</span><br><span class="line">    commonInit();</span><br><span class="line">    nativeZygoteInit();//1</span><br><span class="line">    applicationInit(targetSdkVersion, argv, classLoader);//2</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p> 最后一行代码时启动一个Binder线程池的， 这样SystemServer进程就可以使用Binder与其他进程来通信了；RuntimeInit.java的nativeZygoteInit函数主要做的时启动Binder线程池</p>
+</li>
+<li><p>invokeStaticMain<br> 上面的RuntimeInit.java注释2调用了applicationInit函数；而方法实现时调用了invokeStaticMain函数；</p>
+<p> invokeStaticMain里面主要通过反射返回SystemServer类，然后找到main函数，将main函数传入到MethodAndArgsCaller异常中并抛出该异常，截获MethodAndArgsCaller异常的代码在ZygoteInit的main中；</p>
+ <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">public static void main(String argv[]) &#123;</span><br><span class="line"> ...</span><br><span class="line">      closeServerSocket();</span><br><span class="line">  &#125; catch (MethodAndArgsCaller caller) &#123;</span><br><span class="line">      caller.run();//1</span><br><span class="line">  &#125; catch (RuntimeException ex) &#123;</span><br><span class="line">      Log.e(TAG, &quot;Zygote died with exception&quot;, ex);</span><br><span class="line">      closeServerSocket();</span><br><span class="line">      throw ex;</span><br><span class="line">  &#125;</span><br><span class="line"> &#125;</span><br><span class="line"> </span><br><span class="line">...接着调用caller.run</span><br><span class="line">public void run() &#123;</span><br><span class="line">try &#123;</span><br><span class="line">    mMethod.invoke(null, new Object[] &#123; mArgs &#125;);   //mMethod时SystemServer的main函数</span><br><span class="line">&#125; catch (IllegalAccessException ex) &#123;</span><br><span class="line"> ...</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><h4 id="解析SystemServer进程"><a href="#解析SystemServer进程" class="headerlink" title="解析SystemServer进程"></a>解析SystemServer进程</h4><ul>
+<li><p>主要代码</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">private void run() &#123;</span><br><span class="line">...</span><br><span class="line">    System.loadLibrary(&quot;android_servers&quot;);  //加载android_servers.so库</span><br><span class="line">    // Create the system service manager.创建系统服务管理</span><br><span class="line">    mSystemServiceManager = new SystemServiceManager(mSystemContext);</span><br><span class="line">    LocalServices.addService(SystemServiceManager.class, mSystemServiceManager);</span><br><span class="line"></span><br><span class="line">    // Start services.</span><br><span class="line">    try &#123;</span><br><span class="line">        Trace.traceBegin(Trace.TRACE_TAG_SYSTEM_SERVER, &quot;StartServices&quot;);</span><br><span class="line">        startBootstrapServices();   //启动引导服务</span><br><span class="line">        startCoreServices();        //启动核心服务</span><br><span class="line">        startOtherServices();       //启动其他服务</span><br><span class="line">    &#125; catch (Throwable ex) &#123;</span><br><span class="line">        Slog.e(&quot;System&quot;, &quot;******************************************&quot;);</span><br><span class="line">        Slog.e(&quot;System&quot;, &quot;************ Failure starting system services&quot;, ex);</span><br><span class="line">        throw ex;</span><br><span class="line">    &#125; finally &#123;</span><br><span class="line">        Trace.traceEnd(Trace.TRACE_TAG_SYSTEM_SERVER);</span><br><span class="line">    &#125;</span><br><span class="line">...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>启动引导服务</p>
+<ol>
+<li>阻塞等待与installer创建</li>
+<li>启动ActivityManagerService</li>
+<li>启动PowerManagerService并初始化</li>
+<li>启动LightsService</li>
+<li>启动DisplayManagerService</li>
+<li>启动PackageManagerService</li>
+<li>启动UserManagerService</li>
+<li>启动传感器服务</li>
+</ol>
+</li>
+<li>启动核心服务<ol>
+<li>启动BatteryService，统计电量</li>
+<li>启动UsageStatsService，统计应用使用情况</li>
+<li>启动WebViewUpdateService</li>
+</ol>
+</li>
+<li>启动其他服务<ol>
+<li>启动WindowManagerService</li>
+<li>…</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><h4 id="各启动阶段"><a href="#各启动阶段" class="headerlink" title="各启动阶段"></a>各启动阶段</h4><p>  <img src="http://gityuan.com/images/boot/systemServer/system_server_boot_process.jpg" alt="">   </p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">public final class SystemServer &#123;</span><br><span class="line"></span><br><span class="line">    private void startBootstrapServices() &#123;</span><br><span class="line">      ...</span><br><span class="line">      //phase100</span><br><span class="line">      mSystemServiceManager.startBootPhase(SystemService.PHASE_WAIT_FOR_DEFAULT_DISPLAY);</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void startCoreServices() &#123;</span><br><span class="line">      ...</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    private void startOtherServices() &#123;</span><br><span class="line">      ...</span><br><span class="line">      //phase480 &amp;&amp; 500</span><br><span class="line">      mSystemServiceManager.startBootPhase(SystemService.PHASE_LOCK_SETTINGS_READY);</span><br><span class="line">      mSystemServiceManager.startBootPhase(SystemService.PHASE_SYSTEM_SERVICES_READY);</span><br><span class="line">      </span><br><span class="line">      ...</span><br><span class="line">      mActivityManagerService.systemReady(new Runnable() &#123;</span><br><span class="line">         public void run() &#123;</span><br><span class="line">             //phase550</span><br><span class="line">             mSystemServiceManager.startBootPhase(</span><br><span class="line">                     SystemService.PHASE_ACTIVITY_MANAGER_READY);</span><br><span class="line">             ...</span><br><span class="line">             //phase600</span><br><span class="line">             mSystemServiceManager.startBootPhase(</span><br><span class="line">                     SystemService.PHASE_THIRD_PARTY_APPS_CAN_START);</span><br><span class="line">          &#125;</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>  再Phase1000 ，调用AMS.finishBooting()，系统服务启动阶段完成，system_server进程启动完成进入Looper.loop()状态待命，等待消息队列MessageQueue中的消息到来；</p>
+</li>
+<li><h4 id="总结-3"><a href="#总结-3" class="headerlink" title="总结"></a>总结</h4><ul>
+<li>启动Binder线程池，这样可以与其他进程通信</li>
+<li>创建SystemServiceManager用于对系统的服务进行创建、启动和生命周期管理</li>
+<li>启动各种系统服务</li>
+</ul>
+</li>
+</ul>
+<h3 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h3><ul>
+<li><a href="http://gityuan.com/2016/02/14/android-system-server/" target="_blank" rel="noopener">Android系统启动-SystemServer上篇 - Gityuan博客 | 袁辉辉博客 </a></li>
+<li><a href="http://gityuan.com/2016/02/14/android-system-server-2/" target="_blank" rel="noopener">Android系统启动-SystemServer下篇 - Gityuan博客 | 袁辉辉博客 </a></li>
+<li><a href="http://liuwangshu.cn/framework/booting/3-syetemserver.html" target="_blank" rel="noopener">Android系统启动流程（三）解析SyetemServer进程启动过程 | 刘望舒的博客</a></li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+      <div>
+        <div style="padding: 10px 0; margin: 20px auto; width: 90%; text-align: center;">
+  <div>感谢阅读,您的支持将鼓励我继续创作！</div>
+  <button id="rewardButton" disable="enable" onclick="var qr = document.getElementById('QR'); if (qr.style.display === 'none') {qr.style.display='block';} else {qr.style.display='none'}">
+    <span>打赏</span>
+  </button>
+  <div id="QR" style="display: none;">
+
+    
+      <div id="wechat" style="display: inline-block">
+        <img id="wechat_qr" src="/images/wechatpay.jpg" alt="ThatNight 微信支付"/>
+        <p>微信支付</p>
+      </div>
+    
+
+    
+      <div id="alipay" style="display: inline-block">
+        <img id="alipay_qr" src="/images/alipay.jpg" alt="ThatNight 支付宝"/>
+        <p>支付宝</p>
+      </div>
+    
+
+    
+
+  </div>
+</div>
+
+      </div>
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Android-系统启动流程/" rel="tag"># Android 系统启动流程</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/03/06/Android AMS 快速阅读笔记/" rel="next" title="Android AMS">
+                <i class="fa fa-chevron-left"></i> Android AMS
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/06/Binder机制 快速阅读笔记/" rel="prev" title="Binder机制">
+                Binder机制 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+<span class="jiathis_txt">分享到：</span>
+<a class="jiathis_button_fav">收藏夹</a>
+<a class="jiathis_button_copy">复制网址</a>
+<a class="jiathis_button_email">邮件</a>
+<a class="jiathis_button_weixin">微信</a>
+<a class="jiathis_button_qzone">QQ空间</a>
+<a class="jiathis_button_tqq">腾讯微博</a>
+<a class="jiathis_button_douban">豆瓣</a>
+<a class="jiathis_button_share">一键分享</a>
+
+<a href="http://www.jiathis.com/share?uid=2140465" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank">更多</a>
+<a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+var jiathis_config={
+  data_track_clickback:true,
+  summary:"",
+  shortUrl:false,
+  hideMore:false
+}
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js?uid=" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8zMzAwMy85NTY1"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4"
+                alt="ThatNight" />
+            
+              <p class="site-author-name" itemprop="name">ThatNight</p>
+              <p class="site-description motion-element" itemprop="description">前进, 莫回头.</p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          
+            <div class="links-of-author motion-element">
+                
+                  <span class="links-of-author-item">
+                    <a href="https://github.com/thatnight" target="_blank" title="GitHub">
+                      
+                        <i class="fa fa-fw fa-github"></i>GitHub</a>
+                  </span>
+                
+                  <span class="links-of-author-item">
+                    <a href="https://www.zhihu.com/people/Williamschew/activities" target="_blank" title="知乎">
+                      
+                        <i class="fa fa-fw fa-globe"></i>知乎</a>
+                  </span>
+                
+            </div>
+          
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Android-系统启动流程"><span class="nav-number">1.</span> <span class="nav-text">Android 系统启动流程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#流程"><span class="nav-number">1.1.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#init进程"><span class="nav-number">1.2.</span> <span class="nav-text">init进程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#总结"><span class="nav-number">1.2.1.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Zygote"><span class="nav-number">1.3.</span> <span class="nav-text">Zygote</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简介"><span class="nav-number">1.3.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AppRuntime"><span class="nav-number">1.3.2.</span> <span class="nav-text">AppRuntime</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ZygoteInit-main"><span class="nav-number">1.3.3.</span> <span class="nav-text">ZygoteInit.main</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结-1"><span class="nav-number">1.3.4.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#registerZygoteSocket"><span class="nav-number">1.3.5.</span> <span class="nav-text">registerZygoteSocket</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#启动SystemService"><span class="nav-number">1.3.6.</span> <span class="nav-text">启动SystemService</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#runSelectLoop"><span class="nav-number">1.3.7.</span> <span class="nav-text">runSelectLoop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结-2"><span class="nav-number">1.3.8.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SystemServer"><span class="nav-number">1.4.</span> <span class="nav-text">SystemServer</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#简介-1"><span class="nav-number">1.4.1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流程-1"><span class="nav-number">1.4.2.</span> <span class="nav-text">流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#解析SystemServer进程"><span class="nav-number">1.4.3.</span> <span class="nav-text">解析SystemServer进程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#各启动阶段"><span class="nav-number">1.4.4.</span> <span class="nav-text">各启动阶段</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#总结-3"><span class="nav-number">1.4.5.</span> <span class="nav-text">总结</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">1.5.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+<div class="copyright">&copy; 2016 &mdash; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ThatNight</span>
+
+  
+</div>
+<div class="powered-by">
+<i class="fa fa-user-md"></i><span id="busuanzi_container_site_uv">
+  本站访客数:<span id="busuanzi_value_site_uv"></span>
+</span>
+</div>
+<!-- 
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/iissnan/hexo-theme-next">NexT.Gemini</a> v5.1.4</div>
+
+-->
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.4"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.4"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.4"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.4"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.4"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("rNGy7xuMe8xVYBpzyk6gRnfd-gzGzoHsz", "RscD6Blam0yUUGbO55M3F0Q5");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
