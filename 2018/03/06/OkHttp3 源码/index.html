@@ -83,7 +83,7 @@
 <meta property="og:site_name" content="ThatNight&#39;s Blog">
 <meta property="og:description" content="OkHttp3 源码先了解如何使用 get 同步操作：   123456String url=&amp;apos;...&amp;apos;;OkHttpClient httpClient=new OkHttpClient();Request request=new Request.Builder().url(url).build();Response response=okhttpClient.newCall(">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-03-06T11:43:53.265Z">
+<meta property="og:updated_time" content="2018-03-06T11:57:33.237Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="OkHttp3 源码">
 <meta name="twitter:description" content="OkHttp3 源码先了解如何使用 get 同步操作：   123456String url=&amp;apos;...&amp;apos;;OkHttpClient httpClient=new OkHttpClient();Request request=new Request.Builder().url(url).build();Response response=okhttpClient.newCall(">
@@ -394,58 +394,21 @@
 </ol>
 </li>
 <li><h4 id="Dispatcher任务调度"><a href="#Dispatcher任务调度" class="headerlink" title="Dispatcher任务调度"></a>Dispatcher任务调度</h4><p>  任务的分发：主要就是将Call添加到相应的队列中</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">private int maxRequests = 64;   //最大并发请求数量</span><br><span class="line">  private int maxRequestsPerHost = 5;   //每个主机最大请求数  private Runnable idleCallback;</span><br></pre></td></tr></table></figure>
-<p>private ExecutorService executorService;  //线程池</p>
-<p>private final Deque<asynccall> readyAsyncCalls = new ArrayDeque&lt;&gt;(); //缓存队列</asynccall></p>
-<p>private final Deque<asynccall> runningAsyncCalls = new ArrayDeque&lt;&gt;();   //正在进行的任务</asynccall></p>
-<p>private final Deque<realcall> runningSyncCalls = new ArrayDeque&lt;&gt;();    //同步请求队列<br>  ​<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">- #### Interceptor拦截器</span><br><span class="line">    拦截器的作用很重要：网络请求按照一定顺序，经过多个拦截器处理；</span><br><span class="line"></span><br><span class="line">    优点：将流式工作分解为可配置的分段流程；</span><br></pre></td></tr></table></figure></realcall></p>
-<p>   private Response getResponseWithInterceptorChain() throws IOException {<br>  // Build a full stack of interceptors.<br>  List<interceptor> interceptors = new ArrayList&lt;&gt;();<br>  interceptors.addAll(client.interceptors()); //优先处理自定义拦截器<br>  interceptors.add(retryAndFollowUpInterceptor);  //失败重连拦截器<br>  interceptors.add(new BridgeInterceptor(client.cookieJar())); //接口桥接拦截器（同时处理cookie）<br>  interceptors.add(new CacheInterceptor(client.internalCache()));  //缓存拦截器<br>  interceptors.add(new ConnectInterceptor(client));   //分配链接拦截器，负责与服务器建立连接<br>  if (!retryAndFollowUpInterceptor.isForWebSocket()) {</interceptor></p>
-<pre><code>interceptors.addAll(client.networkInterceptors());
-</code></pre><p>  }<br>  interceptors.add(new CallServerInterceptor(</p>
-<pre><code>retryAndFollowUpInterceptor.isForWebSocket())); //真正连接服务器的网络请求拦截器，向服务器发送请求数据，从服务器读取相应数据
-</code></pre><p>  //责任链模式执行并返回结果<br>  Interceptor.Chain chain = new RealInterceptorChain(</p>
-<pre><code>interceptors, null, null, null, 0, originalRequest);
-</code></pre><p>  return chain.proceed(originalRequest);</p>
-<pre><code>}
-</code></pre>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">接下来时这个责任链如何循环运转的，请看下面proceed方法：</span><br><span class="line"></span><br><span class="line">&gt;我们上面的index=0开始的，所以第一个通常时重定向拦截器；</span><br></pre></td></tr></table></figure>
-<p>  public Response proceed(Request request, StreamAllocation streamAllocation, HttpStream httpStream,</p>
-<pre><code>Connection connection) throws IOException {
-</code></pre><p>  … //省略部分代码</p>
-<p>  RealInterceptorChain next = new RealInterceptorChain(</p>
-<pre><code>interceptors, streamAllocation, httpStream, connection, index + 1, request);    //创建下一个chain
-</code></pre><p>  Interceptor interceptor = interceptors.get(index);  //获取当前的拦截器<br>  Response response = interceptor.intercept(next);    //当前拦截器执行<br>  …</p>
-<p>  return response;</p>
-<pre><code>}
-</code></pre>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">1. 创建下一个realInterceptorChain，index+1，所以下一个是桥接拦截器；我们先看重定向拦截器是怎么将链传递到下一个拦截器的：</span><br></pre></td></tr></table></figure>
-<pre><code>@Override public Response intercept(Chain chain) throws IOException {
-    Request request = chain.request();  //获得request
-    RealInterceptorChain realChain = (RealInterceptorChain) chain;  //获得要处理的任务
-    Call call = realChain.call();
-    EventListener eventListener = realChain.eventListener();
-
-    streamAllocation = new StreamAllocation(client.connectionPool(), createAddress(request.url()),
-        call, eventListener, callStackTrace);
-
-    int followUpCount = 0;
-    Response priorResponse = null;
-    while (true) {
-      if (canceled) {
-        streamAllocation.release();
-        throw new IOException(&quot;Canceled&quot;);
-      }
-
-      Response response;
-      boolean releaseConnection = true;
-      try {
-        response = realChain.proceed(request, streamAllocation, null, null);    //关键的以一句，这里又调用了proceed方法，然后index+1，就会继续传递
-        releaseConnection = false;
-      } ...
-      //省略大量代码
-
-    }
-  }
-```
-</code></pre><ul>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">private int maxRequests = 64;   //最大并发请求数量</span><br><span class="line">private int maxRequestsPerHost = 5;   //每个主机最大请求数  </span><br><span class="line">private Runnable idleCallback;</span><br><span class="line">private ExecutorService executorService;  //线程池</span><br><span class="line">private final Deque&lt;AsyncCall&gt; readyAsyncCalls = new ArrayDeque&lt;&gt;(); //缓存队列</span><br><span class="line">private final Deque&lt;AsyncCall&gt; runningAsyncCalls = new ArrayDeque&lt;&gt;();   //正在进行的任务</span><br><span class="line">private final Deque&lt;RealCall&gt; runningSyncCalls = new ArrayDeque&lt;&gt;();    //同步请求队列</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="Interceptor拦截器"><a href="#Interceptor拦截器" class="headerlink" title="Interceptor拦截器"></a>Interceptor拦截器</h4><p>  拦截器的作用很重要：网络请求按照一定顺序，经过多个拦截器处理；</p>
+<p>  优点：将流式工作分解为可配置的分段流程；</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"> private Response getResponseWithInterceptorChain() throws IOException &#123;</span><br><span class="line">// Build a full stack of interceptors.</span><br><span class="line">List&lt;Interceptor&gt; interceptors = new ArrayList&lt;&gt;();</span><br><span class="line">interceptors.addAll(client.interceptors()); //优先处理自定义拦截器</span><br><span class="line">interceptors.add(retryAndFollowUpInterceptor);  //失败重连拦截器</span><br><span class="line">interceptors.add(new BridgeInterceptor(client.cookieJar())); //接口桥接拦截器（同时处理cookie）</span><br><span class="line">interceptors.add(new CacheInterceptor(client.internalCache()));  //缓存拦截器</span><br><span class="line">interceptors.add(new ConnectInterceptor(client));   //分配链接拦截器，负责与服务器建立连接</span><br><span class="line">if (!retryAndFollowUpInterceptor.isForWebSocket()) &#123;</span><br><span class="line">  interceptors.addAll(client.networkInterceptors());</span><br><span class="line">&#125;</span><br><span class="line">interceptors.add(new CallServerInterceptor(</span><br><span class="line">    retryAndFollowUpInterceptor.isForWebSocket())); //真正连接服务器的网络请求拦截器，向服务器发送请求数据，从服务器读取相应数据</span><br><span class="line"></span><br><span class="line">//责任链模式执行并返回结果</span><br><span class="line">Interceptor.Chain chain = new RealInterceptorChain(</span><br><span class="line">    interceptors, null, null, null, 0, originalRequest);</span><br><span class="line">return chain.proceed(originalRequest);</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<p>  接下来时这个责任链如何循环运转的，请看下面proceed方法：</p>
+<blockquote>
+<p>我们上面的index=0开始的，所以第一个通常时重定向拦截器；</p>
+</blockquote>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">public Response proceed(Request request, StreamAllocation streamAllocation, HttpStream httpStream,</span><br><span class="line">  Connection connection) throws IOException &#123;</span><br><span class="line">... //省略部分代码</span><br><span class="line"></span><br><span class="line">RealInterceptorChain next = new RealInterceptorChain(</span><br><span class="line">    interceptors, streamAllocation, httpStream, connection, index + 1, request);    //创建下一个chain</span><br><span class="line">Interceptor interceptor = interceptors.get(index);  //获取当前的拦截器</span><br><span class="line">Response response = interceptor.intercept(next);    //当前拦截器执行</span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">return response;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>创建下一个realInterceptorChain，index+1，所以下一个是桥接拦截器；我们先看重定向拦截器是怎么将链传递到下一个拦截器的： <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">@Override public Response intercept(Chain chain) throws IOException &#123;</span><br><span class="line">    Request request = chain.request();  //获得request</span><br><span class="line">    RealInterceptorChain realChain = (RealInterceptorChain) chain;  //获得要处理的任务</span><br><span class="line">    Call call = realChain.call();</span><br><span class="line">    EventListener eventListener = realChain.eventListener();</span><br><span class="line"></span><br><span class="line">    streamAllocation = new StreamAllocation(client.connectionPool(), createAddress(request.url()),</span><br><span class="line">        call, eventListener, callStackTrace);</span><br><span class="line"></span><br><span class="line">    int followUpCount = 0;</span><br><span class="line">    Response priorResponse = null;</span><br><span class="line">    while (true) &#123;</span><br><span class="line">      if (canceled) &#123;</span><br><span class="line">        streamAllocation.release();</span><br><span class="line">        throw new IOException(&quot;Canceled&quot;);</span><br><span class="line">      &#125;</span><br><span class="line"></span><br><span class="line">      Response response;</span><br><span class="line">      boolean releaseConnection = true;</span><br><span class="line">      try &#123;</span><br><span class="line">        response = realChain.proceed(request, streamAllocation, null, null);    //关键的以一句，这里又调用了proceed方法，然后index+1，就会继续传递</span><br><span class="line">        releaseConnection = false;</span><br><span class="line">      &#125; ...</span><br><span class="line">      //省略大量代码</span><br><span class="line"></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<ul>
 <li><p>失败重连以及重定向拦截器：</p>
 <p>  死循环获取response，每次循环获取下一个request，如果没有则返回response，并退出；而获取下一个request是根据上一个response返回的状态码；</p>
 </li>
@@ -752,7 +715,7 @@ var jiathis_config={
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OkHttp3-源码"><span class="nav-number">1.</span> <span class="nav-text">OkHttp3 源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#先了解如何使用"><span class="nav-number">1.1.</span> <span class="nav-text">先了解如何使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#get"><span class="nav-number">1.1.1.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#post"><span class="nav-number">1.1.2.</span> <span class="nav-text">post</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更多请求"><span class="nav-number">1.1.3.</span> <span class="nav-text">更多请求</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#工作流程"><span class="nav-number">1.2.1.</span> <span class="nav-text">工作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dispatcher任务调度"><span class="nav-number">1.2.2.</span> <span class="nav-text">Dispatcher任务调度</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发起网络请求"><span class="nav-number">1.3.</span> <span class="nav-text">发起网络请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">1.4.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">1.5.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#OkHttp3-源码"><span class="nav-number">1.</span> <span class="nav-text">OkHttp3 源码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#先了解如何使用"><span class="nav-number">1.1.</span> <span class="nav-text">先了解如何使用</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#get"><span class="nav-number">1.1.1.</span> <span class="nav-text">get</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#post"><span class="nav-number">1.1.2.</span> <span class="nav-text">post</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更多请求"><span class="nav-number">1.1.3.</span> <span class="nav-text">更多请求</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#原理"><span class="nav-number">1.2.</span> <span class="nav-text">原理</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#工作流程"><span class="nav-number">1.2.1.</span> <span class="nav-text">工作流程</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dispatcher任务调度"><span class="nav-number">1.2.2.</span> <span class="nav-text">Dispatcher任务调度</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Interceptor拦截器"><span class="nav-number">1.2.3.</span> <span class="nav-text">Interceptor拦截器</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#发起网络请求"><span class="nav-number">1.3.</span> <span class="nav-text">发起网络请求</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#设计模式"><span class="nav-number">1.4.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#参考文献"><span class="nav-number">1.5.</span> <span class="nav-text">参考文献</span></a></li></ol></li></ol></div>
             
 
           </div>
