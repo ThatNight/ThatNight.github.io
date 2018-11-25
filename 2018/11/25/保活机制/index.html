@@ -83,7 +83,7 @@
 <meta property="og:site_name" content="Charlie-Captain">
 <meta property="og:description" content="保活机制如何保证Service不被杀死 提供进程优先级，降低进程被杀死的概率  方法一：监控手机锁屏解锁事件，在屏幕锁屏时启动1个像素的 Activity，在用户解锁时将 Activity 销毁掉。   方法二：启动前台service。   方法三：提升service优先级：  在AndroidManifest.xml文件中对于intent-filter可以通过android:priority =">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-11-25T04:13:33.608Z">
+<meta property="og:updated_time" content="2018-11-25T04:17:52.871Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="保活机制总结">
 <meta name="twitter:description" content="保活机制如何保证Service不被杀死 提供进程优先级，降低进程被杀死的概率  方法一：监控手机锁屏解锁事件，在屏幕锁屏时启动1个像素的 Activity，在用户解锁时将 Activity 销毁掉。   方法二：启动前台service。   方法三：提升service优先级：  在AndroidManifest.xml文件中对于intent-filter可以通过android:priority =">
@@ -386,6 +386,7 @@
 </li>
 </ul>
 <hr>
+<a id="more"></a>
 <h2 id="进程分类"><a href="#进程分类" class="headerlink" title="进程分类"></a>进程分类</h2><ul>
 <li><h3 id="前台进程"><a href="#前台进程" class="headerlink" title="前台进程"></a>前台进程</h3><ul>
 <li>正在交互的Activity（调用了onResume()）</li>
