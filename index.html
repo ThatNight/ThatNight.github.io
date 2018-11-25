@@ -268,6 +268,1099 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/11/25/保活机制/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Charlie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charlie-Captain">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/25/保活机制/" itemprop="url">保活机制总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-25T12:12:25+08:00">
+                2018-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Service/" itemprop="url" rel="index">
+                    <span itemprop="name">Service</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/25/保活机制/" class="leancloud_visitors" data-flag-title="保活机制总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="保活机制"><a href="#保活机制" class="headerlink" title="保活机制"></a>保活机制</h1><h2 id="如何保证Service不被杀死"><a href="#如何保证Service不被杀死" class="headerlink" title="如何保证Service不被杀死"></a>如何保证Service不被杀死</h2><ul>
+<li><h3 id="提供进程优先级，降低进程被杀死的概率"><a href="#提供进程优先级，降低进程被杀死的概率" class="headerlink" title="提供进程优先级，降低进程被杀死的概率"></a>提供进程优先级，降低进程被杀死的概率</h3><p>  方法一：监控手机锁屏解锁事件，在屏幕锁屏时启动1个像素的 Activity，在用户解锁时将 Activity 销毁掉。</p>
+<p>  方法二：启动前台service。</p>
+<p>  方法三：提升service优先级：<br>  在AndroidManifest.xml文件中对于intent-filter可以通过android:priority = “1000”这个属性设置最高优先级，1000是最高值，如果数字越小则优先级越低，同时适用于广播。==范围在[-1000,1000]==</p>
+</li>
+<li><h3 id="在进程被杀死后，进行拉活"><a href="#在进程被杀死后，进行拉活" class="headerlink" title="在进程被杀死后，进行拉活"></a>在进程被杀死后，进行拉活</h3><p>  方法一：注册高频率广播接收器，唤起进程。如网络变化，解锁屏幕，开机等</p>
+<p>  方法二：双进程相互唤起。</p>
+<p>  方法三：依靠系统唤起。</p>
+<p>  方法四：onDestroy方法里重启service：service +broadcast<br>  方式，就是当service走ondestory的时候，发送一个自定义的广播，当收到广播的时候，重新启动service</p>
+</li>
+<li><h3 id="依靠第三方"><a href="#依靠第三方" class="headerlink" title="依靠第三方"></a>依靠第三方</h3><p>  根据终端不同，在小米手机（包括 MIUI）接入小米推送、华为手机接入华为推送；其他手机可以考虑接入腾讯信鸽或极光推送与小米推送做 A/B Test。</p>
+<blockquote>
+<p>作者：Maat红飞<br>  链接：<a href="https://www.jianshu.com/p/89f19d67b348" target="_blank" rel="noopener">https://www.jianshu.com/p/89f19d67b348</a><br>  來源：简书<br>  著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。</p>
+</blockquote>
+</li>
+</ul>
+<hr>
+<h2 id="进程分类"><a href="#进程分类" class="headerlink" title="进程分类"></a>进程分类</h2><ul>
+<li><h3 id="前台进程"><a href="#前台进程" class="headerlink" title="前台进程"></a>前台进程</h3><ul>
+<li>正在交互的Activity（调用了onResume()）</li>
+<li>Service绑定了正在交互的Activity</li>
+<li>正在前台运行的Service(调用了startForeground())</li>
+<li>正在执行生命周期的Service</li>
+<li>正在onReceive()的广播接收器</li>
+</ul>
+</li>
+<li><h3 id="可见进程"><a href="#可见进程" class="headerlink" title="可见进程"></a>可见进程</h3><ul>
+<li>不在前台，但是用户可见的Activity(调用了onPause())</li>
+<li><p>绑定到可见Activity的Service</p>
+<p>寄宿着一个不是前台的活动，但是它对用户仍可见（它的onPause()方法已经被调用）。举例来说，这可能发生在，如果一个前台活动在一个对话框（其他进程的）运行之后仍然是可视的，比如输入法的弹出时。</p>
+</li>
+</ul>
+</li>
+<li><h3 id="服务进程"><a href="#服务进程" class="headerlink" title="服务进程"></a>服务进程</h3><ul>
+<li><p>后台播放音乐或网络下载的Service</p>
+<p>是一个运行着一个用startService()方法启动的服务，并且该服务并没有落入上面2种分类。虽然服务进程没有直接关系到任何用户可见的，它们通常做用户关心的事（诸如在后台播放mp3或者从网络上下载数据），因此系统保持它们运行，除非没有足够内存来保证所有的前台进程和可视进程。</p>
+</li>
+</ul>
+</li>
+<li><h3 id="后台进程"><a href="#后台进程" class="headerlink" title="后台进程"></a>后台进程</h3><ul>
+<li><p>用户不可见的Activity（调用了onStop())；</p>
+<p>是一个保持着一个当前对用户不可视的活动（已经调用Activity对象的onStop()方法）（如果还有除了UI线程外其他线程在运行话，不受影响）。这些进程没有直接影响用户体验，并且可以在任何时候被杀以收回内存用于一个前台、可视、服务进程。一般地有很多后台进程运行着，因此它们保持在一个LRU（least recently used，即最近最少使用，如果您学过操作系统的话会觉得它很熟悉，跟内存的页面置换算法LRU一样。）列表以确保最近使用最多的活动的进程最后被杀。</p>
+</li>
+</ul>
+</li>
+<li><h3 id="空进程"><a href="#空进程" class="headerlink" title="空进程"></a>空进程</h3><ul>
+<li><p>不包含任何活动组件的进程。<br>为了进行缓存，使下次App启动的时候更快</p>
+<p>保持这个进程可用的唯一原因是作为一个cache以提高下次启动组件的速度。系统进程杀死这些进程，以在进程cache和潜在的内核cache之间平衡整个系统资源。</p>
+</li>
+</ul>
+</li>
+</ul>
+<hr>
+<h2 id="提升进程优先级方案"><a href="#提升进程优先级方案" class="headerlink" title="提升进程优先级方案"></a>提升进程优先级方案</h2><h3 id="创建1像素的Activity"><a href="#创建1像素的Activity" class="headerlink" title="创建1像素的Activity"></a>创建1像素的Activity</h3><p>监听锁屏事件，锁屏是创建一个1像素的Activity，解锁后销毁；</p>
+<ul>
+<li><h4 id="具体实现："><a href="#具体实现：" class="headerlink" title="具体实现："></a>具体实现：</h4><p>  设置Activity的大小为1像素</p>
+  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line">public class LiveActivity extends Activity &#123;</span><br><span class="line"></span><br><span class="line">    public static final String TAG = LiveActivity.class.getSimpleName();</span><br><span class="line"></span><br><span class="line">    public static void actionToLiveActivity(Context pContext) &#123;</span><br><span class="line">        Intent intent = new Intent(pContext, LiveActivity.class);</span><br><span class="line">        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);</span><br><span class="line">        pContext.startActivity(intent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onCreate(Bundle savedInstanceState) &#123;</span><br><span class="line">        super.onCreate(savedInstanceState);</span><br><span class="line">        Log.d(TAG, &quot;onCreate&quot;);</span><br><span class="line">        setContentView(R.layout.activity_live);</span><br><span class="line"></span><br><span class="line">        Window window = getWindow();</span><br><span class="line">        //放在左上角</span><br><span class="line">        window.setGravity(Gravity.START | Gravity.TOP);</span><br><span class="line">        WindowManager.LayoutParams attributes = window.getAttributes();</span><br><span class="line">        //宽高设计为1个像素</span><br><span class="line">        attributes.width = 1;</span><br><span class="line">        attributes.height = 1;</span><br><span class="line">        //起始坐标</span><br><span class="line">        attributes.x = 0;</span><br><span class="line">        attributes.y = 0;</span><br><span class="line">        window.setAttributes(attributes);</span><br><span class="line"></span><br><span class="line">        ScreenManager.getInstance(this).setActivity(this);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    protected void onDestroy() &#123;</span><br><span class="line">        super.onDestroy();</span><br><span class="line">        Log.d(TAG, &quot;onDestroy&quot;);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code>将Activitiy设为透明
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"> &lt;style name=&quot;LiveStyle&quot;&gt;</span><br><span class="line">     &lt;item name=&quot;android:windowIsTranslucent&quot;&gt;true&lt;/item&gt;</span><br><span class="line">     &lt;item name=&quot;android:windowBackground&quot;&gt;@android:color/transparent&lt;/item&gt;</span><br><span class="line">     &lt;item name=&quot;android:windowAnimationStyle&quot;&gt;@null&lt;/item&gt;</span><br><span class="line">     &lt;item name=&quot;android:windowNoTitle&quot;&gt;true&lt;/item&gt;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+
+Service启动
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">public class LiveService extends Service &#123;</span><br><span class="line"></span><br><span class="line">    public  static void toLiveService(Context pContext)&#123;</span><br><span class="line">        Intent intent=new Intent(pContext,LiveService.class);</span><br><span class="line">        pContext.startService(intent);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Nullable</span><br><span class="line">    @Override</span><br><span class="line">    public IBinder onBind(Intent intent) &#123;</span><br><span class="line">        return null;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public int onStartCommand(Intent intent, int flags, int startId) &#123;</span><br><span class="line">        //屏幕关闭的时候启动一个1像素的Activity，开屏的时候关闭Activity</span><br><span class="line">        final ScreenManager screenManager = ScreenManager.getInstance(LiveService.this);</span><br><span class="line">        ScreenBroadcastListener listener = new ScreenBroadcastListener(this);</span><br><span class="line">        listener.registerListener(new ScreenBroadcastListener.ScreenStateListener() &#123;</span><br><span class="line">            @Override</span><br><span class="line">            public void onScreenOn() &#123;</span><br><span class="line">                screenManager.finishActivity();</span><br><span class="line">            &#125;</span><br><span class="line">            @Override</span><br><span class="line">            public void onScreenOff() &#123;</span><br><span class="line">                screenManager.startActivity();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;);</span><br><span class="line">        return START_REDELIVER_INTENT;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</code></pre><p>OK，通过上面的操作，我们的应用就始终和前台进程是一样的优先级了，为了省电，系统检测到锁屏事件后一段时间内会杀死后台进程，如果采取这种方案，就可以避免了这个问题。但是还是有被杀掉的可能，所以我们还需要做双进程守护，关于双进程守护，比较适合的就是aidl的那种方式，但是这个不是完全的靠谱，原理是A进程死的时候，B还在活着，B可以将A进程拉起来，反之，B进程死的时候，A还活着，A可以将B拉起来。所以双进程守护的前提是，系统杀进程只能一个个的去杀，如果一次性杀两个，这种方法也是不OK的。</p>
+<blockquote>
+<p>在应用退出后，ActivityManagerService不仅把主进程给杀死，另外把主进程所属的进程组一并杀死，这样一来，由于子进程和主进程在同一进程组，子进程在做的事情，也就停止了。所以在Android5.0以后的手机应用在进程被杀死后，要采用其他方案。</p>
+</blockquote>
+<h3 id="前台Service"><a href="#前台Service" class="headerlink" title="前台Service"></a>前台Service</h3><p>原理：调用startForeground将后台Service设置为前台时，必须在系统的通知了发送一条通知；    </p>
+<p>通过实现内部Service，在外部Service和内部Service中同时发送具有相同ID的Notification，然后将内部Service结束掉，随着内部Service的结束，Notification会消失，系统优先级依旧为2；</p>
+<p>对于 API level &lt; 18 ：调用startForeground(ID， new Notification())，发送空的Notification ，图标则不会显示。<br>对于 API level &gt;= 18：在需要提优先级的service A启动一个InnerService，两个服务同时startForeground，且绑定同样的 ID。Stop 掉InnerService ，这样通知栏图标即被移除。</p>
+<p>具体实现：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br></pre></td><td class="code"><pre><span class="line">public class KeepLiveService extends Service &#123;</span><br><span class="line"></span><br><span class="line">    public static final int NOTIFICATION_ID=0x11;</span><br><span class="line"></span><br><span class="line">    public KeepLiveService() &#123;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public IBinder onBind(Intent intent) &#123;</span><br><span class="line">        throw new UnsupportedOperationException(&quot;Not yet implemented&quot;);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    @Override</span><br><span class="line">    public void onCreate() &#123;</span><br><span class="line">        super.onCreate();</span><br><span class="line">         //API 18以下，直接发送Notification并将其置为前台</span><br><span class="line">        if (Build.VERSION.SDK_INT &lt;Build.VERSION_CODES.JELLY_BEAN_MR2) &#123;</span><br><span class="line">            startForeground(NOTIFICATION_ID, new Notification());</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            //API 18以上，发送Notification并将其置为前台后，启动InnerService</span><br><span class="line">            Notification.Builder builder = new Notification.Builder(this);</span><br><span class="line">            builder.setSmallIcon(R.mipmap.ic_launcher);</span><br><span class="line">            startForeground(NOTIFICATION_ID, builder.build());</span><br><span class="line">            startService(new Intent(this, InnerService.class));</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    public  class  InnerService extends Service&#123;</span><br><span class="line">        @Override</span><br><span class="line">        public IBinder onBind(Intent intent) &#123;</span><br><span class="line">            return null;</span><br><span class="line">        &#125;</span><br><span class="line">        @Override</span><br><span class="line">        public void onCreate() &#123;</span><br><span class="line">            super.onCreate();</span><br><span class="line">            //发送与KeepLiveService中ID相同的Notification，然后将其取消并取消自己的前台显示</span><br><span class="line">            Notification.Builder builder = new Notification.Builder(this);</span><br><span class="line">            builder.setSmallIcon(R.mipmap.ic_launcher);</span><br><span class="line">            startForeground(NOTIFICATION_ID, builder.build());</span><br><span class="line">            new Handler().postDelayed(new Runnable() &#123;</span><br><span class="line">                @Override</span><br><span class="line">                public void run() &#123;</span><br><span class="line">                    stopForeground(true);</span><br><span class="line">                    NotificationManager manager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);</span><br><span class="line">                    manager.cancel(NOTIFICATION_ID);</span><br><span class="line">                    stopSelf();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;,100);</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<blockquote>
+<p>Android startForeground 却无notification的黑科技原理分析 以及Android7.1的修复 - 一点微小的工作 - CSDN博客 <a href="https://blog.csdn.net/pw4work/article/details/52877980" target="_blank" rel="noopener">https://blog.csdn.net/pw4work/article/details/52877980</a></p>
+</blockquote>
+<h3 id="双进程实现"><a href="#双进程实现" class="headerlink" title="双进程实现"></a>双进程实现</h3><p>使用AIDL绑定方式新建2个Service优先级（防止服务同时被系统杀死）不一样的守护进程互相拉起对方，并在每一个守护进程的<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">- #### 实现</span><br></pre></td></tr></table></figure></p>
+<pre><code>1、新建一个AIDL文件KeepAliveConnection
+
+interface KeepAliveConnection  {
+}
+2、新建一个服务类StepService，onBind()方法返回new KeepAliveConnection.Stub()对象，并在ServiceConnection的绑定回调中对守护进程服务类GuardService的启动和绑定。
+
+/**
+ * 主进程 双进程通讯
+ *
+ * @author LiGuangMin
+ * @time Created by 2018/8/17 11:26
+ */
+public class StepService extends Service {
+
+    private final static String TAG = StepService.class.getSimpleName();
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Logger.d(TAG, &quot;StepService:建立链接&quot;);
+            boolean isServiceRunning = ServiceAliveUtils.isServiceAlice();
+            if (!isServiceRunning) {
+                Intent i = new Intent(StepService.this, DownloadService.class);
+                startService(i);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            // 断开链接
+            startService(new Intent(StepService.this, GuardService.class));
+            // 重新绑定
+            bindService(new Intent(StepService.this, GuardService.class), mServiceConnection, Context.BIND_IMPORTANT);
+        }
+    };
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new KeepAliveConnection.Stub() {
+        };
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(1, new Notification());
+        // 绑定建立链接
+        bindService(new Intent(this, GuardService.class), mServiceConnection, Context.BIND_IMPORTANT);
+        return START_STICKY;
+    }
+
+}
+3、对守护进程GuardService进行和2一样的处理
+
+/**
+ * 守护进程 双进程通讯
+ *
+ * @author LiGuangMin
+ * @time Created by 2018/8/17 11:27
+ */
+public class GuardService extends Service {
+    private final static String TAG = GuardService.class.getSimpleName();
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            Logger.d(TAG, &quot;GuardService:建立链接&quot;);
+            boolean isServiceRunning = ServiceAliveUtils.isServiceAlice();
+            if (!isServiceRunning) {
+                Intent i = new Intent(GuardService.this, DownloadService.class);
+                startService(i);
+            }
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            // 断开链接
+            startService(new Intent(GuardService.this, StepService.class));
+            // 重新绑定
+            bindService(new Intent(GuardService.this, StepService.class), mServiceConnection, Context.BIND_IMPORTANT);
+        }
+    };
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return new KeepAliveConnection.Stub() {
+        };
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        startForeground(1, new Notification());
+        // 绑定建立链接
+        bindService(new Intent(this, StepService.class), mServiceConnection, Context.BIND_IMPORTANT);
+        return START_STICKY;
+    }
+
+}
+4、在Activity中在启动需要保活的DownloadService服务后然后启动保活的双进程
+
+public class MainActivity extends AppCompatActivity {
+    private TextView mShowTimeTv;
+    private DownloadService.DownloadBinder mDownloadBinder;
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mDownloadBinder = (DownloadService.DownloadBinder) service;
+            mDownloadBinder.setOnTimeChangeListener(new DownloadService.OnTimeChangeListener() {
+                @Override
+                public void showTime(final String time) {
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mShowTimeTv.setText(time);
+                        }
+                    });
+                }
+            });
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        Intent intent = new Intent(this, DownloadService.class);
+        startService(intent);
+        bindService(intent, mServiceConnection, Context.BIND_AUTO_CREATE);
+        //双守护线程，优先级不一样
+        startAllServices();
+    }
+
+    @Override
+    public void onContentChanged() {
+        super.onContentChanged();
+        mShowTimeTv = findViewById(R.id.tv_show_time);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unbindService(mServiceConnection);
+    }
+
+    /**
+     * 开启所有守护Service
+     */
+    private void startAllServices() {
+        startService(new Intent(this, StepService.class));
+        startService(new Intent(this, GuardService.class));
+    }
+}
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">---</span><br><span class="line"></span><br><span class="line">### 进程死后拉活方案</span><br><span class="line">- #### 利用系统广播拉活</span><br><span class="line"></span><br><span class="line">    缺点：可被管理软件或系统软件的‘自启管理’拦截了广播，从而无法自启</span><br><span class="line"></span><br><span class="line">- #### 利用第三方应用广播</span><br><span class="line">    通过反编译第三方应用，在应用中进行监听，当这些应用发出广播时，就会将我们的应用拉活</span><br><span class="line"></span><br><span class="line">- #### 利用系统Service机制</span><br><span class="line"></span><br><span class="line">    缺点：第一次被异常杀死后5s内重启，第二次10s重启，但是超过5次不再重启；</span><br><span class="line">    可以被Root权限管理限制；</span><br><span class="line"></span><br><span class="line">- #### 利用Native进程拉活</span><br><span class="line">    利用Linux的fork机制创建Native进程，在Native进程监控主进程的存活；</span><br><span class="line">    </span><br><span class="line">    Android中所有进程和系统组件的生命周期受到ActivityManagerService的统一管理；通过Linux的fork机制创建的进程为Linux的进程，不受Android的管理；</span><br><span class="line"></span><br><span class="line">    缺点：只适用于5.0以下的版本，但是某些机型5.0也有效；</span><br><span class="line">    </span><br><span class="line">- #### 利用JobScheduler机制</span><br><span class="line">    5.0以上新增了JobScheduler接口，系统定时调用该进程;</span><br><span class="line">    </span><br><span class="line">    以下可以兼容5.0</span><br></pre></td></tr></table></figure>
+
+  JobSheduler@TargetApi(Build.VERSION_CODES.LOLLIPOP)
+public class MyJobService extends JobService {
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startJobSheduler();
+    }
+
+    public void startJobSheduler() {
+        try {
+            JobInfo.Builder builder = new JobInfo.Builder(1, new ComponentName(getPackageName(), MyJobService.class.getName()));
+            builder.setPeriodic(5);
+            builder.setPersisted(true);
+            JobScheduler jobScheduler = (JobScheduler) this.getSystemService(Context.JOB_SCHEDULER_SERVICE);
+            jobScheduler.schedule(builder.build());
+        } catch (Exception ex) {
+            ex.printStackTrace();
+        }
+    }
+
+    @Override
+    public boolean onStartJob(JobParameters jobParameters) {
+        return false;
+    }
+
+    @Override
+    public boolean onStopJob(JobParameters jobParameters) {
+        return false;
+    }
+}
+```
+</code></pre><ul>
+<li><h4 id="利用账号同步机制（N以上失效）"><a href="#利用账号同步机制（N以上失效）" class="headerlink" title="利用账号同步机制（N以上失效）"></a>利用账号同步机制（N以上失效）</h4><p>  Android系统的账号同步机制会定期同步账号，下面添加账号和设置同步周期；</p>
+<p>  需要在AndroidManifest中定义账号授权与同步服务</p>
+<p>  使用范围：Android N之前，包括‘强制停止’的进程也可以拉活；</p>
+</li>
+<li><h4 id="其他拉活方案"><a href="#其他拉活方案" class="headerlink" title="其他拉活方案"></a>其他拉活方案</h4><ul>
+<li>无Root<ul>
+<li>利用系统通知管理权限进行拉活</li>
+<li>利用辅助功能拉活，将应用加入厂商或管理软件白名单</li>
+</ul>
+</li>
+<li>Root<ul>
+<li>介入推送</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="Ref"><a href="#Ref" class="headerlink" title="Ref"></a>Ref</h3><ul>
+<li>Android 进程保活的一般套路 - Android - 掘金 <a href="https://juejin.im/entry/58acf391ac502e007e9a0a11" target="_blank" rel="noopener">https://juejin.im/entry/58acf391ac502e007e9a0a11</a></li>
+<li>【腾讯Bugly干货分享】Android进程保活招式大全 <a href="https://zhuanlan.zhihu.com/p/21987083" target="_blank" rel="noopener">https://zhuanlan.zhihu.com/p/21987083</a></li>
+<li>前端之巅 <a href="https://mp.weixin.qq.com/s?__biz=MzUxMzcxMzE5Ng==&amp;mid=2247488488&amp;idx=1&amp;sn=f76fb0a8f88f6958d6a7ecfe6658b5a5&amp;source=41#wechat_redirect" target="_blank" rel="noopener">https://mp.weixin.qq.com/s?__biz=MzUxMzcxMzE5Ng==&amp;mid=2247488488&amp;idx=1&amp;sn=f76fb0a8f88f6958d6a7ecfe6658b5a5&amp;source=41#wechat_redirect</a></li>
+<li>Android 进程保活的一般套路 - Android - 掘金 <a href="https://juejin.im/entry/58acf391ac502e007e9a0a11" target="_blank" rel="noopener">https://juejin.im/entry/58acf391ac502e007e9a0a11</a></li>
+<li>2018年Android的保活方案效果统计 - 吴小龙同学 | 十条 <a href="http://www.10tiao.com/html/565/201809/2247484921/1.html" target="_blank" rel="noopener">http://www.10tiao.com/html/565/201809/2247484921/1.html</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/11/25/面试算法题/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Charlie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charlie-Captain">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/25/面试算法题/" itemprop="url">面试算法题</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-25T12:12:12+08:00">
+                2018-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/算法/" itemprop="url" rel="index">
+                    <span itemprop="name">算法</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/25/面试算法题/" class="leancloud_visitors" data-flag-title="面试算法题">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h3 id="整数"><a href="#整数" class="headerlink" title="整数"></a>整数</h3><ul>
+<li><h4 id="写一个函数，求两个整数之和，要求在函数体内不得使用-、-、-、-四则运算符号。"><a href="#写一个函数，求两个整数之和，要求在函数体内不得使用-、-、-、-四则运算符号。" class="headerlink" title="写一个函数，求两个整数之和，要求在函数体内不得使用+、-、*、/四则运算符号。"></a>写一个函数，求两个整数之和，要求在函数体内不得使用+、-、*、/四则运算符号。</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">public int Add(int num1,int num2) &#123;</span><br><span class="line">    return num2 == 0? num1 : Add(num1^num2, (num1&amp;num2)&lt;&lt;1);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="数组"><a href="#数组" class="headerlink" title="数组"></a>数组</h3><ul>
+<li><h4 id="旋转数组-向右移k位-头条"><a href="#旋转数组-向右移k位-头条" class="headerlink" title="旋转数组(向右移k位, 头条)"></a><a href="https://leetcode-cn.com/problems/rotate-array/description/#" target="_blank" rel="noopener">旋转数组(向右移k位, 头条)</a></h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line">思路:</span><br><span class="line"></span><br><span class="line">    1 2 3 4 5 6 7　　如果k = 3 的话， 会变成 5 6 7 1 2 3 4</span><br><span class="line">　　1 2 3 4 5 6 7　　middle = 7 - 3 = 4，分为左边 4个数字，右边 3个数字</span><br><span class="line">　　4 3 2 1 7 6 5　　分别把左右reverse 一下</span><br><span class="line">　　5 6 7 1 2 3 4　　把总数组reverse 一下就会得到答案</span><br><span class="line">　　</span><br><span class="line">class Solution &#123;</span><br><span class="line">public void rotate(int[] nums, int k) &#123;</span><br><span class="line">    </span><br><span class="line">    int r = k %nums.length;</span><br><span class="line">    int m = nums.length - r;</span><br><span class="line">    change(nums,0,m-1);</span><br><span class="line">    change(nums,m,nums.length-1);</span><br><span class="line">    change(nums,0,nums.length-1);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">void change(int[] nums, int l , int r)&#123;</span><br><span class="line">    while(l&lt;r)&#123;</span><br><span class="line">        int temp = nums[l];</span><br><span class="line">        nums[l]=nums[r];</span><br><span class="line">        nums[r]=temp;</span><br><span class="line">        l++;</span><br><span class="line">        r--;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="寻找数组中最小的k个数-快排和堆排"><a href="#寻找数组中最小的k个数-快排和堆排" class="headerlink" title="寻找数组中最小的k个数(快排和堆排)"></a>寻找数组中最小的k个数(快排和堆排)</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br></pre></td><td class="code"><pre><span class="line">public class FindSmallK &#123;</span><br><span class="line"></span><br><span class="line">public static void main(String[] args) &#123;</span><br><span class="line"></span><br><span class="line">    int[] input = new int[]&#123;4, 5, 1, 6, 2, 7, 3, 8&#125;;</span><br><span class="line">    System.out.println(GetLeastNumbers_Solution(input, 4));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">public static ArrayList&lt;Integer&gt; GetLeastNumbers_Solution(int[] input, int k) &#123;</span><br><span class="line"></span><br><span class="line">    ArrayList&lt;Integer&gt; list = new ArrayList&lt;&gt;();</span><br><span class="line">    if (input == null || input.length &lt; k || k == 0) &#123;</span><br><span class="line">        return list;</span><br><span class="line">    &#125;</span><br><span class="line">    int[] heap = new int[k];</span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; k; i++) &#123;</span><br><span class="line">        heap[i] = input[i];</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    //建堆</span><br><span class="line">    for (int i = heap.length / 2; i &gt;= 0; i--) &#123;</span><br><span class="line">        adjustHeap(heap, i);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    System.out.println(Arrays.toString(heap));</span><br><span class="line"></span><br><span class="line">    //对输入数组k位后的进行堆调整</span><br><span class="line">    for (int i = k; i &lt; input.length; i++) &#123;</span><br><span class="line">        if (input[i] &lt; heap[0]) &#123;</span><br><span class="line">            heap[0] = input[i];</span><br><span class="line">            adjustHeap(heap, 0);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    System.out.println(Arrays.toString(heap));</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    for (int i = 0; i &lt; k; i++) &#123;</span><br><span class="line">        list.add(heap[i]);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    System.out.println(Arrays.toString(heap));</span><br><span class="line"></span><br><span class="line">    return list;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public static void adjustHeap(int[] heap, int s) &#123;</span><br><span class="line"></span><br><span class="line">    for (int i = s; i &lt; heap.length; ) &#123;</span><br><span class="line">        int max = i;</span><br><span class="line">        int left = i * 2 + 1;</span><br><span class="line">        int right = i * 2 + 2;</span><br><span class="line">        if (left &lt; heap.length &amp;&amp; heap[left] &gt; heap[max]) &#123;</span><br><span class="line">            max = left;</span><br><span class="line">        &#125;</span><br><span class="line">        if (right &lt; heap.length &amp;&amp; heap[right] &gt; heap[max]) &#123;</span><br><span class="line">            max = right;</span><br><span class="line">        &#125;</span><br><span class="line">        if (max != i) &#123;</span><br><span class="line">            int t = heap[i];</span><br><span class="line">            heap[i] = heap[max];</span><br><span class="line">            heap[max] = t;</span><br><span class="line">            i = max;</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            break;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<pre><code><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">思路1</span><br><span class="line">优点：节省空降，时间复杂度平均为O（n）</span><br><span class="line">缺点：需要修改原始数组</span><br><span class="line">思路2</span><br><span class="line">优点：不用修改原始数组，适合海量数据</span><br><span class="line">缺点：时间复杂度略高O(nlogk)</span><br></pre></td></tr></table></figure>
+</code></pre><ul>
+<li><h4 id="最长连续递增序列"><a href="#最长连续递增序列" class="headerlink" title="最长连续递增序列"></a><a href="https://leetcode-cn.com/problems/longest-continuous-increasing-subsequence/description/" target="_blank" rel="noopener">最长连续递增序列</a></h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public int findLengthOfLCIS(int[] nums) &#123;</span><br><span class="line">    </span><br><span class="line">    int max=0;</span><br><span class="line">    </span><br><span class="line">    for(int i=0;i&lt;nums.length;i++)&#123;</span><br><span class="line">        int len=1;</span><br><span class="line">        if(i&lt;nums.length-1)&#123;</span><br><span class="line">          int j=i+1;</span><br><span class="line">            int k =i;</span><br><span class="line">            while(j&lt;nums.length&amp;&amp;nums[k]&lt;nums[j])&#123;</span><br><span class="line">                len++;</span><br><span class="line">                j++;</span><br><span class="line">                k++;</span><br><span class="line">            &#125;  </span><br><span class="line">        &#125;  </span><br><span class="line">        max = Math.max(max, len);</span><br><span class="line">    &#125;</span><br><span class="line">    return max;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="字符串"><a href="#字符串" class="headerlink" title="字符串"></a>字符串</h3><ul>
+<li><h4 id="字符串中的第一个唯一字"><a href="#字符串中的第一个唯一字" class="headerlink" title="字符串中的第一个唯一字"></a><a href="https://leetcode-cn.com/problems/first-unique-character-in-a-string/description/" target="_blank" rel="noopener">字符串中的第一个唯一字</a></h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public int firstUniqChar(String s) &#123;</span><br><span class="line">        </span><br><span class="line">        //解法1</span><br><span class="line">        // int[] c=new int[30];</span><br><span class="line">        // for(int i =0;i&lt;s.length();i++)&#123;</span><br><span class="line">        //     c[s.charAt(i)-&apos;a&apos;]++;</span><br><span class="line">        // &#125;</span><br><span class="line">        // int index=-1;</span><br><span class="line">        // for(int i=0;i&lt;s.length();i++)&#123;</span><br><span class="line">        //     if(c[s.charAt(i)-&apos;a&apos;]==1)&#123;</span><br><span class="line">        //         index=i;</span><br><span class="line">        //         break;</span><br><span class="line">        //     &#125;</span><br><span class="line">        // &#125;</span><br><span class="line">        // return index;</span><br><span class="line">        </span><br><span class="line">        //解法2</span><br><span class="line">        Map&lt;Character,Integer&gt; map=new LinkedHashMap&lt;&gt;();</span><br><span class="line">        for(int i=0 ;i&lt;s.length();i++)&#123;</span><br><span class="line">            map.put(s.charAt(i),map.containsKey(s.charAt(i))?map.get(s.charAt(i))+1:1);</span><br><span class="line">        &#125;</span><br><span class="line">        int index=-1;</span><br><span class="line">        for(Map.Entry&lt;Character,Integer&gt; e: map.entrySet())&#123;</span><br><span class="line">            if(e.getValue()==1)&#123;</span><br><span class="line">                index = s.indexOf(e.getKey());</span><br><span class="line">                break;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        return index;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="无重复最长子串"><a href="#无重复最长子串" class="headerlink" title="无重复最长子串"></a><a href="https://leetcode-cn.com/problems/longest-substring-without-repeating-characters/description/" target="_blank" rel="noopener">无重复最长子串</a></h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">public int lengthOfLongestSubstring(String s) &#123;</span><br><span class="line">   HashMap&lt;Character,Integer&gt; map=new HashMap&lt;&gt;();</span><br><span class="line">    int len=0,start=0,max=0;</span><br><span class="line">    for(int i=0;i&lt;s.length();i++)&#123;</span><br><span class="line">        if(map.containsKey(s.charAt(i))&amp;&amp;map.get(s.charAt(i))&gt;=start)&#123;</span><br><span class="line">            start=map.get(s.charAt(i))+1;</span><br><span class="line">        &#125;</span><br><span class="line">        len = i-start+1;</span><br><span class="line">        map.put(s.charAt(i),i);</span><br><span class="line">        max = Math.max(len,max);</span><br><span class="line">    &#125;</span><br><span class="line">    return max;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="大数相乘-腾讯二面"><a href="#大数相乘-腾讯二面" class="headerlink" title="大数相乘(腾讯二面)"></a>大数相乘(腾讯二面)</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">class Solution &#123;</span><br><span class="line">    public String multiply(String num1, String num2) &#123;</span><br><span class="line">        if(num1.equals(&quot;0&quot;)||num2.equals(&quot;0&quot;))&#123;</span><br><span class="line">            return &quot;0&quot;;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        char[] nums1=num1.toCharArray();</span><br><span class="line">        char[] nums2=num2.toCharArray();</span><br><span class="line">        </span><br><span class="line">        int[] result = new int[nums1.length+nums2.length];</span><br><span class="line">        </span><br><span class="line">        </span><br><span class="line">        for(int i=0;i&lt;nums1.length;i++)&#123;</span><br><span class="line">            for(int j=0;j&lt;nums2.length;j++)&#123;</span><br><span class="line">                result[i+j] += (nums1[i]-&apos;0&apos;)*(nums2[j]-&apos;0&apos;);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        for(int i=result.length-1;i&gt;0;i--)&#123;</span><br><span class="line">            result[i-1] += result[i]/10;</span><br><span class="line">            result[i] = result[i]% 10;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        StringBuffer sb=new StringBuffer();</span><br><span class="line">        for(int i=0;i&lt;result.length-1;i++)&#123;</span><br><span class="line">            sb.append(result[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        return sb.toString();</span><br><span class="line">        </span><br><span class="line">    &#125;</span><br><span class="line">&#125;&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="树"><a href="#树" class="headerlink" title="树"></a>树</h3><ul>
+<li><h4 id="层次遍历-头条一面"><a href="#层次遍历-头条一面" class="headerlink" title="层次遍历(头条一面)"></a>层次遍历(头条一面)</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line">public static void levelTravel(Node root)&#123;  </span><br><span class="line">    if(root==)return;  </span><br><span class="line">    Queue&lt;Node&gt; q=new LinkedList&lt;Node&gt;();  </span><br><span class="line">    q.add(root);  </span><br><span class="line">    while(!q.isEmpty())&#123;  </span><br><span class="line">        Node temp =  q.poll();  </span><br><span class="line">        System.out.println(temp.value);  </span><br><span class="line">        if(temp.left!=)q.add(temp.left);  </span><br><span class="line">        if(temp.right!=)q.add(temp.right);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;  </span><br><span class="line"></span><br><span class="line"> /*</span><br><span class="line"> * 层序遍历</span><br><span class="line"> * 非递归</span><br><span class="line"> */</span><br><span class="line">public void levelOrder1(BinaryNode&lt;AnyType&gt; Node) &#123;</span><br><span class="line">    if (Node == null) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    BinaryNode&lt;AnyType&gt; binaryNode;</span><br><span class="line">    Queue&lt;BinaryNode&gt; queue = new LinkedList&lt;&gt;();</span><br><span class="line">    queue.add(Node);</span><br><span class="line"></span><br><span class="line">    while (queue.size() != 0) &#123;</span><br><span class="line">        binaryNode = queue.poll();</span><br><span class="line"></span><br><span class="line">        System.out.print(binaryNode.element + &quot;  &quot;);</span><br><span class="line"></span><br><span class="line">        if (binaryNode.left != null) &#123;</span><br><span class="line">            queue.offer(binaryNode.left);</span><br><span class="line">        &#125;</span><br><span class="line">        if (binaryNode.right != null) &#123;</span><br><span class="line">            queue.offer(binaryNode.right);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="二叉树的遍历-非递归"><a href="#二叉树的遍历-非递归" class="headerlink" title="二叉树的遍历 (非递归)"></a>二叉树的遍历 (非递归)</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * 前序遍历</span><br><span class="line"> * 非递归</span><br><span class="line"> */</span><br><span class="line">public void preOrder1(BinaryNode&lt;AnyType&gt; Node)</span><br><span class="line">&#123;</span><br><span class="line">    Stack&lt;BinaryNode&gt; stack = new Stack&lt;&gt;();</span><br><span class="line">    while(Node != null || !stack.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        while(Node != null)</span><br><span class="line">        &#123;</span><br><span class="line">            System.out.print(Node.element + &quot;   &quot;);</span><br><span class="line">            stack.push(Node);</span><br><span class="line">            Node = Node.left;</span><br><span class="line">        &#125;</span><br><span class="line">        if(!stack.empty())</span><br><span class="line">        &#123;</span><br><span class="line">            Node = stack.pop();</span><br><span class="line">            Node = Node.right;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 中序遍历</span><br><span class="line"> * 非递归</span><br><span class="line"> */</span><br><span class="line">public void midOrder1(BinaryNode&lt;AnyType&gt; Node)</span><br><span class="line">&#123;</span><br><span class="line">    Stack&lt;BinaryNode&gt; stack = new Stack&lt;&gt;();</span><br><span class="line">    while(Node != null || !stack.empty())</span><br><span class="line">    &#123;</span><br><span class="line">        while (Node != null)</span><br><span class="line">        &#123;</span><br><span class="line">            stack.push(Node);</span><br><span class="line">            Node = Node.left;</span><br><span class="line">        &#125;</span><br><span class="line">        if(!stack.empty())</span><br><span class="line">        &#123;</span><br><span class="line">            Node = stack.pop();</span><br><span class="line">            System.out.print(Node.element + &quot;   &quot;);</span><br><span class="line">            Node = Node.right;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">/**</span><br><span class="line"> * 后序遍历</span><br><span class="line"> * 非递归</span><br><span class="line"> */</span><br><span class="line"> public void thePostOrderTraversal_Stack(Node root) &#123;   //后序遍历  </span><br><span class="line">    Stack&lt;Node&gt; stack = new Stack&lt;Node&gt;();  </span><br><span class="line">    Stack&lt;Node&gt; output = new Stack&lt;Node&gt;();//构造一个中间栈来存储逆后序遍历的结果  </span><br><span class="line">    Node node = root;  </span><br><span class="line">    while (node != null || stack.size() &gt; 0) &#123;  </span><br><span class="line">        if (node != null) &#123;  </span><br><span class="line">            output.push(node);  </span><br><span class="line">            stack.push(node);                 </span><br><span class="line">            node = node.getRightNode();  </span><br><span class="line">        &#125; else &#123;  </span><br><span class="line">            node = stack.pop();               </span><br><span class="line">            node = node.getLeftNode();</span><br><span class="line">        &#125;  </span><br><span class="line">    &#125;  </span><br><span class="line">    System.out.println(output.size());</span><br><span class="line">    while (output.size() &gt; 0) &#123;</span><br><span class="line">        printNode(output.pop());    //最后的输出</span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">/*</span><br><span class="line"> * 层序遍历</span><br><span class="line"> * 非递归</span><br><span class="line"> */</span><br><span class="line">public void levelOrder1(BinaryNode&lt;AnyType&gt; Node) &#123;</span><br><span class="line">    if (Node == null) &#123;</span><br><span class="line">        return;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    BinaryNode&lt;AnyType&gt; binaryNode;</span><br><span class="line">    Queue&lt;BinaryNode&gt; queue = new LinkedList&lt;&gt;();</span><br><span class="line">    queue.add(Node);</span><br><span class="line"></span><br><span class="line">    while (queue.size() != 0) &#123;</span><br><span class="line">        binaryNode = queue.poll();</span><br><span class="line"></span><br><span class="line">        System.out.print(binaryNode.element + &quot;  &quot;);</span><br><span class="line"></span><br><span class="line">        if (binaryNode.left != null) &#123;</span><br><span class="line">            queue.offer(binaryNode.left);</span><br><span class="line">        &#125;</span><br><span class="line">        if (binaryNode.right != null) &#123;</span><br><span class="line">            queue.offer(binaryNode.right);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><h4 id="二叉搜索树的第k小的节点"><a href="#二叉搜索树的第k小的节点" class="headerlink" title="二叉搜索树的第k小的节点"></a>二叉搜索树的第k小的节点</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line">public class TreeNode &#123;</span><br><span class="line">int val = 0;</span><br><span class="line">TreeNode left = null;</span><br><span class="line">TreeNode right = null;</span><br><span class="line"></span><br><span class="line">public TreeNode(int val) &#123;</span><br><span class="line">    this.val = val;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line">public class Solution &#123;</span><br><span class="line"></span><br><span class="line">TreeNode res; </span><br><span class="line">int c = 0;</span><br><span class="line">TreeNode KthNode(TreeNode pRoot, int k)</span><br><span class="line">&#123;</span><br><span class="line">    getNode(pRoot,k);</span><br><span class="line">    return res;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">public void getNode(TreeNode p ,int k)&#123;</span><br><span class="line">    if(p==null||c&gt;k)&#123;</span><br><span class="line">        return ;</span><br><span class="line">    &#125;</span><br><span class="line">    getNode(p.left,k);</span><br><span class="line">    c++;</span><br><span class="line">    if(c==k)&#123;</span><br><span class="line">        res = p;</span><br><span class="line">    &#125;</span><br><span class="line">    getNode(p.right,k);</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/11/25/计算机网络面试知识/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Charlie">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charlie-Captain">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/11/25/计算机网络面试知识/" itemprop="url">计算机网络总结</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-11-25T12:12:04+08:00">
+                2018-11-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/网络/" itemprop="url" rel="index">
+                    <span itemprop="name">网络</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/11/25/计算机网络面试知识/" class="leancloud_visitors" data-flag-title="计算机网络总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数&#58;</span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h1 id="NetWork"><a href="#NetWork" class="headerlink" title="NetWork"></a>NetWork</h1><blockquote>
+<p>本文鉴于个人搜集资料文章总结所得，若有错误请尽快联系我！</p>
+</blockquote>
+<p>[TOC]</p>
+<h2 id="计算机网络体系结构-可以分为四层也可以是7层："><a href="#计算机网络体系结构-可以分为四层也可以是7层：" class="headerlink" title="计算机网络体系结构, 可以分为四层也可以是7层："></a>计算机网络体系结构, 可以分为四层也可以是7层：</h2><p><img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/1005dc9d-9049-4b06-9524-6171e56ebd8c.png" alt=""></p>
+<ul>
+<li><h3 id="应用层"><a href="#应用层" class="headerlink" title="应用层"></a>应用层</h3><p>  为特定应用程序提供数据传输服务，例如 HTTP、DNS 等。数据单位为报文。</p>
+</li>
+<li><h3 id="运输层"><a href="#运输层" class="headerlink" title="运输层"></a>运输层</h3><p>  提供的是进程间的通用数据传输服务。由于应用层协议很多，定义通用的运输层协议就可以支持不断增多的应用层协议。运输层包括两种协议：传输控制协议 TCP，提供面向连接、可靠的数据传输服务，数据单位为报文段；用户数据报协议 UDP，提供无连接、尽最大努力的数据传输服务，数据单位为用户数据报。TCP 主要提供完整性服务，UDP 主要提供及时性服务。</p>
+</li>
+<li><h3 id="网络层"><a href="#网络层" class="headerlink" title="网络层"></a>网络层</h3><p>  为主机之间提供服务，而不是像运输层协议那样是为主机中的进程提供服务。网络层把运输层传递下来的报文段或者用户数据报封装成分组来进行传输。</p>
+</li>
+<li><h3 id="数据链路层"><a href="#数据链路层" class="headerlink" title="数据链路层"></a>数据链路层</h3><p>  网络层针对的还是主机之间，而主机之间可以有很多链路，链路层协议就是为相邻结点之间提供服务。数据链路层把网络层传来的分组封装成帧。</p>
+</li>
+<li><h3 id="物理层"><a href="#物理层" class="headerlink" title="物理层"></a>物理层</h3><p>  考虑的是怎样在传输媒体上传输数据比特流，而不是指具体的传输媒体。物理层的作用是尽可能屏蔽传输媒体和通信手段的差异，使物理层上的数据链路层感觉不到这些差异。</p>
+</li>
+</ul>
+<h2 id="IP（网络层）"><a href="#IP（网络层）" class="headerlink" title="IP（网络层）"></a>IP（网络层）</h2><p>用于报文交换网络的一种面向数据的协议，是TCP/IP协议中网络层的主要协议；</p>
+<p>主要根据源主机和目的主机的地址传送数据；有IPv4和IPv6；</p>
+<ul>
+<li><h3 id="网络层的结构"><a href="#网络层的结构" class="headerlink" title="网络层的结构"></a>网络层的结构</h3><p>  <img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/163cf8b4-5f30-46c9-af00-316a71b3c890.jpg" alt=""></p>
+<ol>
+<li>地址解析协议 ARP（Address Resolution Protocol）</li>
+<li>网际控制报文协议 ICMP（Internet Control Message Protocol）</li>
+<li>网际组管理协议 IGMP（Internet Group Management Protocol）</li>
+</ol>
+</li>
+<li><h3 id="IP数据报格式"><a href="#IP数据报格式" class="headerlink" title="IP数据报格式"></a>IP数据报格式</h3><p>  <img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/8681db55-0873-434b-aa98-83d07e8392ae.jpg" alt=""></p>
+<ul>
+<li><p>版本 : 有 4（IPv4）和 6（IPv6）两个值；</p>
+</li>
+<li><p>首部长度 : 占 4 位，因此最大值为 15。值为 1 表示的是 1 个 32 位字的长度，也就是 4 字节。因为首部固定长度为 20 字节，因此该值最小为 5。如果可选部分的长度不是 4 字节的整数倍，就用尾部的填充部分来填充。</p>
+</li>
+<li><p>区分服务 : 用来获得更好的服务，一般情况下不使用。</p>
+</li>
+<li><p>总长度 : 包括首部长度和数据部分长度。</p>
+</li>
+<li><p>标识 : 在数据报长度过长从而发生分片的情况下，==相同数据报的不同分片具有相同的标识符。==</p>
+</li>
+<li><p>片偏移 : 和标识符一起，用于发生分片的情况。片偏移的单位为 8 字节。<br><img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/45c86855-9b18-4cf4-a9a7-f8b6eb78d133.png" alt=""></p>
+</li>
+<li><p>生存时间 ：TTL，它的存在是为了防止无法交付的数据报在互联网中不断兜圈子。以路由器跳数为单位，当 TTL 为 0 时就丢弃数据报。</p>
+</li>
+<li><p>协议 ：指出携带的数据应该上交给哪个协议进行处理，==例如 ICMP、TCP、UDP 等。==</p>
+</li>
+<li><p>首部检验和 ：因为数据报每经过一个路由器，都要重新计算检验和，因此检验和不包含数据部分可以减少计算的工作量。</p>
+</li>
+</ul>
+</li>
+<li><h3 id="IP地址"><a href="#IP地址" class="headerlink" title="IP地址"></a>IP地址</h3><ul>
+<li>A：前8位网络号，后24位主机号，以0开头</li>
+<li>B：前16位网络号，后16位主机号，以10开头</li>
+<li>C：前24位网络号，后8位主机号，以110开头</li>
+<li>D：多播地址，1110开头</li>
+<li><p>E：保留地址，1111开头</p>
+<p><img src="http://img.blog.csdn.net/20170404105414667?watermark/2/text/aHR0cDovL2Jsb2cuY3Nkbi5uZXQveXVseXU=/font/5a6L5L2T/fontsize/400/fill/I0JBQkFCMA==/dissolve/70/gravity/SouthEast" alt=""></p>
+</li>
+<li><p>全是0的主机号代表网络本身</p>
+</li>
+<li>全是1的主机号代表广播，用于向该网络中所有主机发送消息；</li>
+<li>以十进制127开头的地址是环回地址，目的地址是环回地址的</li>
+</ul>
+</li>
+<li><h3 id="ARP"><a href="#ARP" class="headerlink" title="ARP"></a>ARP</h3>  把IP地址映射位物理地址；反之为RARP；</li>
+<li><h3 id="子网掩码"><a href="#子网掩码" class="headerlink" title="子网掩码"></a>子网掩码</h3><p>  32位地址，1表示网络位，0表示主机位；指明一个IP地址的哪些位标识的是主机所在的子网以及哪些位标识是主机的位掩码，必须和IP地址结合使用；</p>
+<p>  作用：将某个Ip地址分成网络地址和主机地址；</p>
+</li>
+</ul>
+<h2 id="TCP-IP（运输层）"><a href="#TCP-IP（运输层）" class="headerlink" title="TCP/IP（运输层）"></a>TCP/IP（运输层）</h2><ul>
+<li><h3 id="什么是TCP-IP"><a href="#什么是TCP-IP" class="headerlink" title="什么是TCP/IP"></a>什么是TCP/IP</h3><p>  TCP/IP是一类协议系统，用于网络通信的一套协议集合;</p>
+<blockquote>
+<p>现在的 TCP/IP 体系结构不严格遵循 OSI 分层概念，应用层可能会直接使用 IP 层或者网络接口层。</p>
+</blockquote>
+</li>
+<li><h3 id="TCP"><a href="#TCP" class="headerlink" title="TCP"></a>TCP</h3><p>  运输层: 运输层提供了应用进程间的逻辑通信。运输层向高层用户屏蔽了下面网络层的核心细节，使应用程序看见的好像在两个运输层实体之间有一条端到端的逻辑通信信道。</p>
+<p>  TCP: 是面向连接的，提供可靠交付，有流量控制，拥塞控制，提供全双工通信，面向字节流（把应用层传下来的报文看成字节流，把字节流组织成大小不等的数据块）</p>
+<p>  意义：应用层之间需要可靠的像管道一样的连接，网络层不提供，只提供不可靠的包交换，因此需要运输层的协调；</p>
+<ul>
+<li><h4 id="首部格式"><a href="#首部格式" class="headerlink" title="首部格式:"></a>首部格式:</h4><p>  <img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/21a00b02-c0a6-4bcd-9af0-5ec6bb66e34c.jpg" alt=""></p>
+<ul>
+<li><p>seq序号 ：用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。</p>
+</li>
+<li><p>ack确认号 ：期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</p>
+</li>
+<li><p>数据偏移 ：指的是数据部分距离报文段起始处的偏移量，实际上指的是首部的长度。</p>
+</li>
+<li><p><strong>确认 ACK ：当 ACK=1 时确认号字段有效，否则无效。TCP 规定，在连接建立后所有传送的报文段都必须把 ACK 置 1。</strong></p>
+</li>
+<li><p><strong>同步 SYN ：在连接建立时用来同步序号。当 SYN=1，ACK=0 时表示这是一个连接请求报文段。若对方同意建立连接，则响应报文中 SYN=1，ACK=1。</strong></p>
+</li>
+<li><p><strong>终止 FIN ：用来释放一个连接，当 FIN=1 时，表示此报文段的发送方的数据已发送完毕，并要求释放运输连接。</strong></p>
+</li>
+<li><p>窗口 ：窗口值作为接收方让发送方设置其发送窗口的依据。之所以要有这个限制，是因为接收方的数据缓存空间是有限的。</p>
+</li>
+</ul>
+</li>
+<li><h4 id="作用："><a href="#作用：" class="headerlink" title="作用："></a>作用：</h4><ul>
+<li>将应用层向传输层发送网间传输的、8位字节表示的数据流分成适当长度的报文段，收链路层最大传输单元MTU限制；</li>
+<li>传包给网络层，TCP为了不丢包，每个包一个序号，保证了传送到接收端实体的包能按序接受，然后接受实体收到包后返回相应的ACK确认</li>
+<li>如果发送端实体再合理的RTT（往返时延)没收到确认，那么对应的数据包就被认为丢失，将重传</li>
+<li>TCP用一个校验和（Checksum）函数来检验数据是否错误，发送和接受都需要计算这个</li>
+</ul>
+</li>
+<li><h4 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h4><p>  <strong>seq数据包本身序列号；ack期望继续发送数据包序列号</strong></p>
+<p>  <img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/086871db-5871-460f-97b7-126cd738bb0e.jpg" alt=""></p>
+<p>  <img src="https://github.com/lisongting/preparation/blob/26f7302dcc243aecfd363e1a31769946efc852f9/images/network1.jpg?raw=true" alt=""></p>
+<p>  <strong>三次握手</strong><br>  假设 A 为客户端，B 为服务器端。</p>
+<ul>
+<li><p>首先 B 处于 LISTEN（监听）状态，等待客户的连接请求。</p>
+</li>
+<li><p>A 向 B 发送连接请求报文，SYN=1，ACK=0，选择一个初始的序号 x。</p>
+</li>
+<li><p>B 收到连接请求报文，如果同意建立连接，则向 A 发送连接确认报文，SYN=1，ACK=1，确认号为 x+1，同时也选择一个初始的序号 y。</p>
+</li>
+<li><p>A 收到 B 的连接确认报文后，还要向 B 发出确认，确认号为 y+1，序号为 x+1。</p>
+</li>
+<li><p>B 收到 A 的确认后，连接建立。</p>
+</li>
+</ul>
+</li>
+<li><p><strong>三次握手的原因</strong></p>
+<p>  第三次握手是为了防止失效的连接请求到达服务器，让服务器错误打开连接。</p>
+<p>  客户端发送的连接请求如果在网络中滞留，那么就会隔很长一段时间才能收到服务器端发回的连接确认。客户端等待一个超时重传时间之后，就会重新请求连接。但是这个滞留的连接请求最后还是会到达服务器，如果不进行三次握手，那么服务器就会打开两个连接。如果有第三次握手，客户端会忽略服务器之后发送的对滞留连接请求的连接确认，不进行第三次握手，因此就不会再次打开连接。</p>
+</li>
+<li><p><strong>四次挥手的原因</strong></p>
+<p>  客户端发送了 FIN 连接释放报文之后，服务器收到了这个报文，就进入了 CLOSE-WAIT 状态。这个状态是为了让服务器端发送还未传送完毕的数据，传送完毕之后，服务器会发送 FIN 连接释放报文。</p>
+<p>  TIME_WAIT</p>
+<p>  客户端接收到服务器端的 FIN 报文后进入此状态，此时并不是直接进入 CLOSED 状态，还需要等待一个时间计时器设置的时间 2MSL。这么做有两个理由：</p>
+<p>  确保最后一个确认报文能够到达。如果 B 没收到 A 发送来的确认报文，那么就会重新发送连接释放请求报文，A 等待一段时间就是为了处理这种情况的发生。</p>
+<p>  等待一段时间是为了让本连接持续时间内所产生的所有报文都从网络中消失，使得下一个新的连接不会出现旧的连接请求报文。</p>
+</li>
+<li><h4 id="TCP滑动窗口"><a href="#TCP滑动窗口" class="headerlink" title="TCP滑动窗口"></a>TCP滑动窗口</h4><p><img src="https://github.com/CyC2018/Interview-Notebook/raw/66d63de8b875ff9be79763fb9bbed93f183403cb/pics/223fc26e-2fd6-484c-bcb7-443cac134f15.jpg" alt=""><br>窗口是缓存的一部分，用来暂时存放字节流。发送方和接收方各有一个窗口，接收方通过 TCP 报文段中的窗口字段告诉发送方自己的窗口大小，发送方根据这个值和其它信息设置自己的窗口大小。</p>
+</li>
+<li><h4 id="慢启动和拥塞避免"><a href="#慢启动和拥塞避免" class="headerlink" title="慢启动和拥塞避免"></a>慢启动和拥塞避免</h4><p>  所以需要设置一个慢开始门限ssthresh状态变量:</p>
+<ol>
+<li><p>当cwnd &lt; ssthresh, 使用慢启动算法</p>
+</li>
+<li><p>当cwnd &gt; ssthresh, 使用拥塞避免算法, 停用慢启动算法</p>
+<h5 id="慢启动思路"><a href="#慢启动思路" class="headerlink" title="慢启动思路"></a>慢启动思路</h5><p>开始发送方先设置cwnd(拥塞窗口)=1, 发送第一个报文段M1, 接收到接收方的确认后, 把cwnd 加倍(2), 接着一直重复下去</p>
+<h5 id="拥塞避免"><a href="#拥塞避免" class="headerlink" title="拥塞避免"></a>拥塞避免</h5><p>为了防止cwnd增加过快而导致网络拥塞, 每经过一个RTT事件就把发送方的cwnd+1, <strong>这里不是加倍</strong>;</p>
+<h5 id="拥塞控制"><a href="#拥塞控制" class="headerlink" title="拥塞控制"></a>拥塞控制</h5><p>当发送方判断网络出现拥塞(没收到确认), 就把门限ssthresh设置为出现拥塞时的拥塞窗口值的一半(除以2), 再把cwnd设为1, 重新开始慢启动算法(目的是较少发送到网络种的分组数, 使得积压的分组被处理完毕)</p>
+<p><img src="http://p2e1umi3v.bkt.clouddn.com/18-3-9/81168366.jpg" alt=""></p>
+</li>
+</ol>
+</li>
+<li><h4 id="快重传-和-快恢复"><a href="#快重传-和-快恢复" class="headerlink" title="快重传 和 快恢复"></a>快重传 和 快恢复</h4><ol>
+<li>接收方每次接受到报文段都会对已收到的有序报文段确认, 例如已经接收到M1,M2,此时收到M4, 应当发送对M2的确认</li>
+<li><p>发送方如果收到三个重复的确认, 那么可以确认下一个报文段丢失, 例如收到三个M2, 那么M3丢失, 此时启动快重传</p>
+<p>只是丢失个别报文段的这种情况下, 一般不会网络拥塞, 所以执行快恢复, 设ssthresh = cwnd/2 ,cwnd =ssthresh, 并且启动拥塞避免;</p>
+</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><h3 id="UDP"><a href="#UDP" class="headerlink" title="UDP"></a>UDP</h3><p>  是无连接的，尽最大可能交付，没有拥塞控制，面向报文（对于应用程序传下来的报文不合并也不拆分，只是添加 UDP 首部）。</p>
+<ul>
+<li>不提供对IP协议的可靠机制、流控制以及错误恢复功能，在数据传输之前不需要建立连接。</li>
+<li><p>较简单，比TCP负载消耗少；</p>
+</li>
+<li><h4 id="UDP首部格式"><a href="#UDP首部格式" class="headerlink" title="UDP首部格式"></a>UDP首部格式</h4><p><img src="https://github.com/CyC2018/Interview-Notebook/raw/master/pics/bd6c05f3-02ee-4c8a-b374-40c87154a898.jpg" alt=""></p>
+</li>
+<li><h4 id="如何实现可靠的UDP"><a href="#如何实现可靠的UDP" class="headerlink" title="如何实现可靠的UDP"></a>如何实现可靠的UDP</h4><p>  <a href="https://blog.csdn.net/gettogetto/article/details/76736365" target="_blank" rel="noopener">https://blog.csdn.net/gettogetto/article/details/76736365</a></p>
+</li>
+</ul>
+</li>
+<li><h3 id="TCP和UDP的应用"><a href="#TCP和UDP的应用" class="headerlink" title="TCP和UDP的应用"></a>TCP和UDP的应用</h3><p>  <img src="http://p2e1umi3v.bkt.clouddn.com/18-3-9/50470979.jpg" alt=""></p>
+<h2 id="HTTP和HTTPS（引用层）"><a href="#HTTP和HTTPS（引用层）" class="headerlink" title="HTTP和HTTPS（引用层）"></a>HTTP和HTTPS（引用层）</h2></li>
+<li><h3 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h3><p>  Hyper Text Transfer Protocal超文本传输协议；用于万维网服务器传输超文本到本地浏览器的传输协议；基于TCP/IP的应用层协议</p>
+<ul>
+<li><h4 id="特点"><a href="#特点" class="headerlink" title="特点"></a>特点</h4><ul>
+<li>简单快速：请求方法有GET，POST,PUT等；</li>
+<li>灵活：允许传输任意类型的数据对象，传输类型有content-type标记</li>
+<li>无连接：限制每次连接只处理一个请求，服务器处理完用户请求并受到客户端的应答后，即断开连接.==但是在Http1.1的时候默认为长连接==</li>
+<li>无状态：服务器不会为下一次连接而维护这次连接所传输的信息，没有记忆性；</li>
+</ul>
+</li>
+<li><h4 id="请求方式"><a href="#请求方式" class="headerlink" title="请求方式"></a>请求方式</h4><p>  HTTP1.0定义了三种请求方法： GET, POST 和 HEAD方法。</p>
+<p>  HTTP1.1新增了五种请求方法：OPTIONS, PUT, DELETE, TRACE 和 CONNECT 方法。<br>  <img src="http://p2e1umi3v.bkt.clouddn.com/18-3-9/67661190.jpg" alt="">来源: 菜鸟教程</p>
+</li>
+<li><h4 id="get和post的区别"><a href="#get和post的区别" class="headerlink" title="==get和post的区别=="></a>==get和post的区别==</h4><ul>
+<li>get能被缓存</li>
+<li>get请求回保存在浏览器的记录中，也能保存为书签</li>
+<li>get有长度限制而post没有</li>
+<li>get不安全，post安全</li>
+<li>get只当用于取回数据</li>
+<li>get不应再处理敏感数据时使用</li>
+<li>post参数不会保存再浏览器历史或服务器日志中</li>
+</ul>
+</li>
+<li><h4 id="状态码（这个很少问）"><a href="#状态码（这个很少问）" class="headerlink" title="状态码（这个很少问）"></a>状态码（这个很少问）</h4><ul>
+<li>1xx: 信息相应，接受到请求</li>
+<li>2xx: 处理成功响应，被成功接受</li>
+<li>3xx: 重定向响应，完成制定的动作，必须接受进一步</li>
+<li>4xx: 客户端错误，请求语法错误</li>
+<li>5xx: 服务端错误，不能执行一个正确的请求</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="HTTPS"><a href="#HTTPS" class="headerlink" title="HTTPS"></a>HTTPS</h3><p>  HTTPS以安全为目标的HTTP通道，在HTTP加入SSL层，HTTPS的安全基础就是SSL（Secure Sockets Layer），加密的详细内容需要SSL；</p>
+<p>  两种方式确保安全：建立信息安全通道；确认网站的真实性；</p>
+<ul>
+<li><strong>加密流程</strong></li>
+</ul>
+<ol>
+<li>客户端使用https访问URL, 与服务器建立SSL连接</li>
+<li>服务器收到请求, 返回网站的证书信息(包含公钥)</li>
+<li>客户端和服务端开始ssl连接的安全等级</li>
+<li>根据双方同意的安全等级, 建立会话密钥, 利用网站的公钥将会话密钥加密, 传送到服务器</li>
+<li>服务器利用自己的私钥解密出会话密钥</li>
+<li>服务器利用会话密钥加密与客户端的通信</li>
+</ol>
+<ul>
+<li><h4 id="其他版本详细加密的流程"><a href="#其他版本详细加密的流程" class="headerlink" title="其他版本详细加密的流程"></a>其他版本详细加密的流程</h4></li>
+</ul>
+<ol>
+<li><p>客户端的浏览器向服务器传送客户端SSL 协议的版本号，加密算法的种类，产生的随机数，以及其他服务器和客户端之间通讯所需要的各种信息。</p>
+</li>
+<li><p>服务器向客户端传送SSL 协议的版本号，加密算法的种类，随机数以及其他相关信息，同时服务器还将向客户端传送自己的证书。</p>
+</li>
+<li><p>客户利用服务器传过来的信息验证服务器的合法性，服务器的合法性包括：证书是否过期，发行服务器证书的CA 是否可靠，发行者证书的公钥能否正确解开服务器证书的“发行者的数字签名”，服务器证书上的域名是否和服务器的实际域名相匹配。如果合法性验证没有通过，通讯将断开；如果合法性验证通过，将继续进行第四步。</p>
+</li>
+<li><p>用户端随机产生一个用于后面通讯的“对称密码”，然后用服务器的公钥（服务器的公钥从步骤②中的服务器的证书中获得）对其加密，然后传给服务器。</p>
+</li>
+<li><p>服务器用私钥解密“对称密码”(此处的公钥和私钥是相互关联的，公钥加密的数据只能用私钥解密，私钥只在服务器端保留。然后用其作为服务器和客户端的“通话密码”加解密通讯。同时在SSL 通讯过程中还要完成数据通讯的完整性，防止数据通讯中的任何变化。</p>
+</li>
+<li><p>客户端向服务器端发出信息，指明后面的数据通讯将使用的步骤⑤中的主密码为对称密钥，同时通知服务器客户端的握手过程结束。</p>
+</li>
+<li><p>服务器向客户端发出信息，指明后面的数据通讯将使用的步骤⑤中的主密码为对称密钥，同时通知客户端服务器端的握手过程结束。</p>
+</li>
+<li><p>SSL 的握手部分结束，SSL 安全通道的数据通讯开始，客户和服务器开始使用相同的对称密钥进行数据通讯，同时进行通讯完整性的检验。</p>
+</li>
+</ol>
+<ul>
+<li>缺点</li>
+</ul>
+<ol>
+<li>握手阶段比较费时. 网页加载时间延长</li>
+<li>缓存不如http高效, 会增加数据开销</li>
+<li>SSL证书需要钱</li>
+<li>SSL证书需要绑定IP, 不能在同一IP绑定多个域名</li>
+<li>并非绝对安全, 有CA根证书和长我加密算法依旧可以进行中间人攻击</li>
+</ol>
+</li>
+<li><h3 id="HTTP和HTTPS的区别"><a href="#HTTP和HTTPS的区别" class="headerlink" title="HTTP和HTTPS的区别"></a>HTTP和HTTPS的区别</h3><ul>
+<li>HTTP传输的数据是未加密的，HTTPS是加密的</li>
+<li>HTTP使用80端口，HTTPS使用443端口</li>
+<li>HTTPS需要CA，证书授权中心的授权证书</li>
+<li>HTTPs 并不是新协议，而是 HTTP 先和 SSL（Secure Socket Layer）通信，再由 SSL 和 TCP 通信。通过使用 SSL，HTTPs 提供了加密、认证和完整性保护。</li>
+</ul>
+</li>
+<li><h3 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h3><p>  Http协议是无状态的, 而Http/1.1引入了Cookie来保存状态信息;</p>
+<ul>
+<li>Set-Cookie字段有以下属性:<br>  <img src="http://p2e1umi3v.bkt.clouddn.com/18-3-9/69897260.jpg" alt=""></li>
+<li>Session和Cookie的区别<br>  Session 是服务器用来跟踪用户的一种手段，每个 Session 都有一个唯一标识：Session ID。当服务器创建了一个 Session 时，给客户端发送的响应报文就包含了 Set-Cookie 字段，其中有一个名为 sid 的键值对，这个键值对就是 Session ID。客户端收到后就把 Cookie 保存在浏览器中，并且之后发送的请求报文都包含 Session ID。HTTP 就是通过 Session 和 Cookie 这两种方式一起合作来实现跟踪用户状态的，Session 用于服务器端，Cookie 用于客户端。</li>
+<li>区别<ul>
+<li>存储数据量方面：session 能够存储任意的 java 对象，cookie 只能存储 String 类型的对象</li>
+<li>一个在客户端一个在服务端。因Cookie在客户端所以可以编辑伪造，不是十分安全。</li>
+<li>Session过多时会消耗服务器资源，大型网站会有专门Session服务器，Cookie存在客户端没问题。</li>
+<li>域的支持范围不一样，比方说a.com的Cookie在a.com下都能用，而www.a.com的Session在api.a.com下都不能用，解决这个问题的办法是JSONP或者跨域资源共享。</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><h3 id="缓存"><a href="#缓存" class="headerlink" title="缓存"></a>缓存</h3><p>  有两种缓存方法：让代理服务器进行缓存和让客户端浏览器进行缓存。</p>
+<p>  Cache-Control 用于控制缓存的行为。Cache-Control: no-cache 有两种含义，如果是客户端向缓存服务器发送的请求报文中含有该指令，表示客户端不想要缓存的资源；如果是源服务器向缓存服务器发送的响应报文中含有该指令，表示缓存服务器不能对资源进行缓存。</p>
+<p>  Expires 字段可以用于告知缓存服务器该资源什么时候会过期。当首部字段 Cache-Control 有指定 max-age 指令时，比起首部字段 Expires，会优先处理 max-age 指令。</p>
+<p>  在 HTTP/1.1 中，会优先处理 max-age 指令；<br>  在 HTTP/1.0 中，max-age 指令会被忽略掉。</p>
+</li>
+<li><h3 id="持久链接"><a href="#持久链接" class="headerlink" title="持久链接"></a>持久链接</h3><ul>
+<li>Http/1.0 之前默认是非持久化连接的, 如果要维持持续链接, 需要使用Keep-Alive</li>
+<li>Http/1.1 默认持久化连接, 通过Connection首字段进行管理.</li>
+</ul>
+</li>
+<li><h3 id="Http各版本区别"><a href="#Http各版本区别" class="headerlink" title="Http各版本区别"></a>Http各版本区别</h3><ul>
+<li><h4 id="HTTP-0-9"><a href="#HTTP-0-9" class="headerlink" title="HTTP/0.9"></a>HTTP/0.9</h4><p>  HTTP 0.9是第一个版本的HTTP协议，已过时。它的组成极其简单，只允许客户端发送GET这一种请求，且不支持请求头。由于没有协议头，造成了HTTP 0.9协议只支持一种内容，即纯文本。不过网页仍然支持用HTML语言格式化，同时无法插入图片。</p>
+<p>  HTTP 0.9具有典型的无状态性，每个事务独立进行处理，事务结束时就释放这个连接。由此可见，HTTP协议的无状态特点在其第一个版本0.9中已经成型。一次HTTP 0.9的传输首先要建立一个由客户端到Web服务器的TCP连接，由客户端发起一个请求，然后由Web服务器返回页面内容，然后连接会关闭。如果请求的页面不存在，也不会返回任何错误码。</p>
+</li>
+<li><h4 id="HTTP-1-0"><a href="#HTTP-1-0" class="headerlink" title="HTTP/1.0"></a>HTTP/1.0</h4><ol>
+<li>请求与响应支持头域</li>
+<li>响应对象以一个响应状态行开始</li>
+<li>响应对象不只限于超文本</li>
+<li>开始支持客户端通过POST方法向Web服务器提交数据，支持GET、HEAD、POST5. 方法</li>
+<li>支持长连接（但默认还是使用短连接），缓存机制，以及身份认证 </li>
+</ol>
+</li>
+<li><h4 id="HTTP-1-1"><a href="#HTTP-1-1" class="headerlink" title="HTTP/1.1"></a>HTTP/1.1</h4>  关键的性能优化: keepalive连接，chunked编码传输，字节范围请求，请求流水线等<ol>
+<li>请求消息和响应消息都应支持Host头域在HTTP1.0中认为每台服务器都绑定一个唯一的IP地址，因此，请求消息中的URL并没有传递主机名（hostname）。但随着虚拟主机技术的发展，在一台物理服务器上可以存在多个虚拟主机（Multi-homed Web Servers），并且它们共享一个IP地址。因此，Host头的引入就很有必要了。</li>
+<li>新增了一批Request method<br>HTTP1.1增加了OPTIONS,PUT, DELETE, TRACE, CONNECT方法<br>缓存处理</li>
+<li>HTTP/1.1在1.0的基础上加入了一些cache的新特性，引入了实体标签，一般被称为e-tags，新增更为强大的Cache-Control头。 </li>
+</ol>
+</li>
+<li><h4 id="HTTP-2-0"><a href="#HTTP-2-0" class="headerlink" title="HTTP/2.0"></a>HTTP/2.0</h4><p>  HTTP 2.0是下一代HTTP协议，目前应用还非常少。主要特点有：</p>
+<ol>
+<li><p>多路复用（二进制分帧）</p>
+<p>  不会改动HTTP 的语义，HTTP 方法、状态码、URI 及首部字段，等等这些核心概念上一如往常，却能致力于突破上一代标准的性能限制，改进传输性能，实现低延迟和高吞吐量。而之所以叫2.0，是在于新增的二进制分帧层。在二进制分帧层上， HTTP 2.0 会将所有传输的信息分割为更小的消息和帧,并对它们采用二进制格式的编码 ，其中HTTP1.x的首部信息会被封装到Headers帧，而我们的request body则封装到Data帧里面。</p>
+</li>
+<li>头部压缩[ 像来自同一个网页的图像，将会有大量的请求看上去几乎同样的，这就需要压缩技术对付这种几乎相同的信息。]</li>
+<li>随时复位</li>
+<li>服务器端推流: Server Push</li>
+<li>优先权和依赖</li>
+</ol>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="参考文献"><a href="#参考文献" class="headerlink" title="参考文献"></a>参考文献</h2><ul>
+<li>面试时，你被问到过 TCP/IP 协议吗? - CSDN博客 <a href="http://blog.csdn.net/yulyu/article/details/69062288" target="_blank" rel="noopener">http://blog.csdn.net/yulyu/article/details/69062288</a></li>
+<li>preparation/Network.md <a href="https://github.com/lisongting/preparation/blob/26f7302dcc243aecfd363e1a31769946efc852f9/Network.md" target="_blank" rel="noopener">https://github.com/lisongting/preparation/blob/26f7302dcc243aecfd363e1a31769946efc852f9/Network.md</a></li>
+<li><a href="https://github.com/CyC2018/Interview-Notebook/blob/master/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C.md" target="_blank" rel="noopener">https://github.com/CyC2018/Interview-Notebook/blob/master/notes/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C.md</a></li>
+<li>TCP拥塞控制-慢启动、拥塞避免、快重传、快启动 - CSDN博客 <a href="http://blog.csdn.net/jtracydy/article/details/52366461" target="_blank" rel="noopener">http://blog.csdn.net/jtracydy/article/details/52366461</a></li>
+<li><a href="https://github.com/CyC2018/Interview-Notebook/blob/66d63de8b875ff9be79763fb9bbed93f183403cb/notes/HTTP.md" target="_blank" rel="noopener">https://github.com/CyC2018/Interview-Notebook/blob/66d63de8b875ff9be79763fb9bbed93f183403cb/notes/HTTP.md</a></li>
+<li>https加密流程和原理 - CSDN博客 <a href="http://blog.csdn.net/xincai/article/details/51954468" target="_blank" rel="noopener">http://blog.csdn.net/xincai/article/details/51954468</a></li>
+</ul>
+
+          
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/03/06/OkHttp3 源码/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1383,488 +2476,11 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/03/06/RemoteView 内部原理/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Charlie">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Charlie-Captain">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/03/06/RemoteView 内部原理/" itemprop="url">RemoteView 内部原理</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-06T19:23:07+08:00">
-                2018-03-06
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/RemoteView/" itemprop="url" rel="index">
-                    <span itemprop="name">RemoteView</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/03/06/RemoteView 内部原理/" class="leancloud_visitors" data-flag-title="RemoteView 内部原理">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="RemoteView"><a href="#RemoteView" class="headerlink" title="RemoteView"></a>RemoteView</h2><h3 id="简介"><a href="#简介" class="headerlink" title="简介"></a>简介</h3><p>RemoteView, 提供一些基础操作用于跨进程更新界面;</p>
-<p>比如通知栏和桌面小部件的界面更新;</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/03/06/RemoteView 内部原理/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/01/21/HashMap/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Charlie">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Charlie-Captain">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/21/HashMap/" itemprop="url">HashMap</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T10:19:51+08:00">
-                2018-01-21
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/java/" itemprop="url" rel="index">
-                    <span itemprop="name">java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/01/21/HashMap/" class="leancloud_visitors" data-flag-title="HashMap">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="HashMap"><a href="#HashMap" class="headerlink" title="HashMap"></a>HashMap</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><ul>
-<li><p>hashmap 是什么？原理又是什么？<br>  jdk1.7-<a href="https://www.cnblogs.com/chengxiao/p/6059914.html" target="_blank" rel="noopener">https://www.cnblogs.com/chengxiao/p/6059914.html</a></p>
-<p>  jdk1.8-<a href="http://blog.csdn.net/richard_jason/article/details/53887222" target="_blank" rel="noopener">http://blog.csdn.net/richard_jason/article/details/53887222</a><br>  ​<br>  区别：jdk1.8如果put冲突了，链表长度大于8即转换为红黑树</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/21/HashMap/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/01/20/jvm 快速阅读笔记/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Charlie">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="https://avatars0.githubusercontent.com/u/18600419?s=460&v=4">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Charlie-Captain">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2018/01/20/jvm 快速阅读笔记/" itemprop="url">JVM 快速阅读笔记</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-20T20:19:51+08:00">
-                2018-01-20
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/JVM/" itemprop="url" rel="index">
-                    <span itemprop="name">JVM</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-             <span id="/2018/01/20/jvm 快速阅读笔记/" class="leancloud_visitors" data-flag-title="JVM 快速阅读笔记">
-               <span class="post-meta-divider">|</span>
-               <span class="post-meta-item-icon">
-                 <i class="fa fa-eye"></i>
-               </span>
-               
-                 <span class="post-meta-item-text">阅读次数&#58;</span>
-               
-                 <span class="leancloud-visitors-count"></span>
-             </span>
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="JVM"><a href="#JVM" class="headerlink" title="JVM"></a>JVM</h2><p>这篇笔记写给自己在实习之前看的，有什么不对地方请广而告知，我会持续更新修改。</p>
-<blockquote>
-<p>本片文章字数较多，适合快速浏览，有不详细的请另行百度</p>
-</blockquote>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2018/01/20/jvm 快速阅读笔记/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right"></i></a>
   </nav>
 
 
@@ -1914,7 +2530,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">28</span>
+                  <span class="site-state-item-count">31</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
@@ -1925,7 +2541,7 @@
               
               <div class="site-state-item site-state-categories">
                 <a href="/categories/index.html">
-                  <span class="site-state-item-count">16</span>
+                  <span class="site-state-item-count">19</span>
                   <span class="site-state-item-name">分类</span>
                 </a>
               </div>
@@ -1936,7 +2552,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">24</span>
+                  <span class="site-state-item-count">27</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>
