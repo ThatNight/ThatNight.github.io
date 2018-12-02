@@ -64,7 +64,7 @@
 
 
 
-  <meta name="keywords" content="activity," />
+  <meta name="keywords" content="Tweaks," />
 
 
 
@@ -75,18 +75,18 @@
 
 
 
-<meta name="description" content="相对两个Activity  在两个Activity中的其中一个想要关闭另外一个Activity的话,方法很简单, 如下:  先在其中一个Activity中定义一个静态变量 1234567public class AActivity extends Activity&amp;#123;    public static AActivity mInstance=null;        ...onCreat">
-<meta name="keywords" content="activity">
+<meta name="description" content="AndroidTweaks不需要重新编译，就可以修改view的参数，保存你想保存的值。 https://github.com/charlie-captain/AndroidTweaks">
+<meta name="keywords" content="Tweaks">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Android 退出其他Activity">
-<meta property="og:url" content="https://charlie-captain.github.io/2017/05/31/Android 退出其他Activity/index.html">
+<meta property="og:title" content="Android Tweaks">
+<meta property="og:url" content="https://charlie-captain.github.io/2018/12/02/android tweaks cn/index.html">
 <meta property="og:site_name" content="Charlie-Captain">
-<meta property="og:description" content="相对两个Activity  在两个Activity中的其中一个想要关闭另外一个Activity的话,方法很简单, 如下:  先在其中一个Activity中定义一个静态变量 1234567public class AActivity extends Activity&amp;#123;    public static AActivity mInstance=null;        ...onCreat">
+<meta property="og:description" content="AndroidTweaks不需要重新编译，就可以修改view的参数，保存你想保存的值。 https://github.com/charlie-captain/AndroidTweaks">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-01-06T13:10:38.034Z">
+<meta property="og:updated_time" content="2018-12-02T06:04:02.794Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Android 退出其他Activity">
-<meta name="twitter:description" content="相对两个Activity  在两个Activity中的其中一个想要关闭另外一个Activity的话,方法很简单, 如下:  先在其中一个Activity中定义一个静态变量 1234567public class AActivity extends Activity&amp;#123;    public static AActivity mInstance=null;        ...onCreat">
+<meta name="twitter:title" content="Android Tweaks">
+<meta name="twitter:description" content="AndroidTweaks不需要重新编译，就可以修改view的参数，保存你想保存的值。 https://github.com/charlie-captain/AndroidTweaks">
 
 
 
@@ -116,13 +116,13 @@
 
 
 
-  <link rel="canonical" href="https://charlie-captain.github.io/2017/05/31/Android 退出其他Activity/"/>
+  <link rel="canonical" href="https://charlie-captain.github.io/2018/12/02/android tweaks cn/"/>
 
 
 
 
 
-  <title>Android 退出其他Activity | Charlie-Captain</title>
+  <title>Android Tweaks | Charlie-Captain</title>
   
 
 
@@ -269,7 +269,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2017/05/31/Android 退出其他Activity/">
+    <link itemprop="mainEntityOfPage" href="https://charlie-captain.github.io/2018/12/02/android tweaks cn/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Charlie">
@@ -286,7 +286,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">Android 退出其他Activity</h1>
+          <h1 class="post-title" itemprop="name headline">Android Tweaks</h1>
         
 
         <div class="post-meta">
@@ -298,8 +298,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-31T20:19:51+08:00">
-                2017-05-31
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-02T14:03:15+08:00">
+                2018-12-02
               </time>
             
 
@@ -321,8 +321,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/四大组件/" itemprop="url" rel="index">
-                    <span itemprop="name">四大组件</span>
+                  <a href="/categories/Tweaks/" itemprop="url" rel="index">
+                    <span itemprop="name">Tweaks</span>
                   </a>
                 </span>
 
@@ -338,7 +338,7 @@
 
           
           
-             <span id="/2017/05/31/Android 退出其他Activity/" class="leancloud_visitors" data-flag-title="Android 退出其他Activity">
+             <span id="/2018/12/02/android tweaks cn/" class="leancloud_visitors" data-flag-title="Android Tweaks">
                <span class="post-meta-divider">|</span>
                <span class="post-meta-item-icon">
                  <i class="fa fa-eye"></i>
@@ -369,30 +369,21 @@
       
 
       
-        <ul>
-<li><h3 id="相对两个Activity"><a href="#相对两个Activity" class="headerlink" title="相对两个Activity"></a>相对两个Activity</h3><p>  在两个Activity中的其中一个想要关闭另外一个Activity的话,方法很简单, 如下:</p>
-<ol>
-<li><p>先在其中一个Activity中定义一个静态变量</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">public class AActivity extends Activity&#123;</span><br><span class="line">    public static AActivity mInstance=null;</span><br><span class="line">    </span><br><span class="line">    ...onCreate(...)&#123;</span><br><span class="line">        mInstance = this;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-</li>
-<li><p>然后在另一个Activity就可以直接调用</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">AActivity.mInstance.finish();</span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-</li>
-</ul>
+        <h1 id="AndroidTweaks"><a href="#AndroidTweaks" class="headerlink" title="AndroidTweaks"></a>AndroidTweaks</h1><p>不需要重新编译，就可以修改view的参数，保存你想保存的值。</p>
+<p><a href="https://github.com/charlie-captain/AndroidTweaks" target="_blank" rel="noopener">https://github.com/charlie-captain/AndroidTweaks</a></p>
 <a id="more"></a>
-<ul>
-<li><h3 id="对于多个Activity"><a href="#对于多个Activity" class="headerlink" title="对于多个Activity"></a>对于多个Activity</h3><ul>
-<li><h4 id="ActivityManager"><a href="#ActivityManager" class="headerlink" title="ActivityManager"></a>ActivityManager</h4>  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">public class ActivityManager &#123;  </span><br><span class="line">  </span><br><span class="line">    private List&lt;Activity&gt; mActivityList = new LinkedList&lt;Activity&gt;();  </span><br><span class="line">    private static ActivityManager mInstance;  </span><br><span class="line">  </span><br><span class="line">    private ActivityManager() &#123;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    // 单例模式</span><br><span class="line">    public static ActivityManager getInstance() &#123;  </span><br><span class="line">        if (null == instance) &#123;  </span><br><span class="line">            mInstance = new ActivityManager();  </span><br><span class="line">        &#125;  </span><br><span class="line">        return mInstance;  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    // 添加Activity到容器中  </span><br><span class="line">    public void addActivity(Activity activity) &#123;  </span><br><span class="line">        mActivityList.add(activity);  </span><br><span class="line">    &#125;  </span><br><span class="line">  </span><br><span class="line">    // 遍历所有Activity并finish  </span><br><span class="line">    public void exit() &#123;  </span><br><span class="line">        for (Activity activity : mActivityList) &#123;  </span><br><span class="line">            activity.finish();  </span><br><span class="line">        &#125;  </span><br><span class="line">        System.exit(0);  </span><br><span class="line">    &#125;  </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>  用法很简单, 在需要的Activity的onCreate方法中加入下面一句</p>
-  <figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">ActivtyManager.getInstance().addActivity(this);</span><br><span class="line"></span><br><span class="line">退出时调用</span><br><span class="line">ActivityManager.getInstance().exit();</span><br></pre></td></tr></table></figure>
-<p>​</p>
-<p>​</p>
-</li>
-</ul>
-</li>
-</ul>
+<h2 id="How-to-use"><a href="#How-to-use" class="headerlink" title="How to use"></a>How to use</h2><blockquote>
+<p>因为他还不够稳定，所以我没有上传到bintray</p>
+</blockquote>
+<h3 id="App"><a href="#App" class="headerlink" title="App"></a>App</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">TweakManager.with(this)</span><br></pre></td></tr></table></figure>
+<h3 id="object-继承-TweakLibrary"><a href="#object-继承-TweakLibrary" class="headerlink" title="object 继承 TweakLibrary"></a>object 继承 TweakLibrary</h3><p>此处定义静态的Tweaks，现在支持两种类型，int和bool<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">object DebugLibrary : TweakLibrary() &#123;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    /*</span><br><span class="line">     * topic: 总分类</span><br><span class="line">     * category：tweak 的所在类别</span><br><span class="line">     * title：tweak 的名称</span><br><span class="line">     * type：现在只支持 TweakBool、 TweakInt、TweakString</span><br><span class="line">     *</span><br><span class="line">     */</span><br><span class="line"></span><br><span class="line">    val longPressToSaveIcon = Tweak(&quot;UI&quot;, &quot;LongPress&quot;, &quot;save icon&quot;, TweakBool(false))</span><br><span class="line"></span><br><span class="line">    //这里必须加上上面定义的Tweaks, 比如: longPressToSaveIcon, xxxTweaks, ...</span><br><span class="line">    override val tweakStore = TweakStore().listOf(</span><br><span class="line">            longPressToSaveIcon</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>动态定义Tweak，主要是为了方便设置一个默认值</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">val screenWidth = resources.displayMetrics.widthPixels</span><br><span class="line">val screenHeight = resources.displayMetrics.heightPixels</span><br><span class="line">//动态添加,下面举个例子</span><br><span class="line">DebugLibrary.add(</span><br><span class="line">    Tweak(</span><br><span class="line">        &quot;UI&quot;,</span><br><span class="line">        &quot;button&quot;,</span><br><span class="line">        &quot;width&quot;,</span><br><span class="line">        TweakInt(btn_width,0,screenWidth)</span><br><span class="line">    )</span><br><span class="line">)</span><br><span class="line"></span><br><span class="line">//button高度</span><br><span class="line">DebugLibrary.add(</span><br><span class="line">    Tweak(</span><br><span class="line">        &quot;UI&quot;,</span><br><span class="line">        &quot;button&quot;,</span><br><span class="line">        &quot;height&quot;,</span><br><span class="line">        TweakInt(btn_height,0,screenHeight)</span><br><span class="line">    )</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="获取值"><a href="#获取值" class="headerlink" title="获取值"></a>获取值</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">//静态</span><br><span class="line">DebugLibrary.longPressToSaveIcon.value as (转换成你想要的类型，一般是不会为null)</span><br><span class="line"></span><br><span class="line">//动态添加的tweaks</span><br><span class="line">DebugLibrary.value(key)</span><br></pre></td></tr></table></figure>
+<h3 id="启动Tweak程序"><a href="#启动Tweak程序" class="headerlink" title="启动Tweak程序"></a>启动Tweak程序</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">btn.setOnClickListener &#123;</span><br><span class="line">    TweakManager.initLibrary(DebugLibrary).start()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="Issue-or-Pull-requests"><a href="#Issue-or-Pull-requests" class="headerlink" title="Issue or Pull requests"></a>Issue or Pull requests</h2><p>欢迎大家一起和我来完善这个库</p>
+<p>email: charlie.captain@foxmail.com</p>
+<h2 id="感谢"><a href="#感谢" class="headerlink" title="感谢"></a>感谢</h2><p><a href="https://github.com/Khan/SwiftTweaks" target="_blank" rel="noopener">https://github.com/Khan/SwiftTweaks</a></p>
 
       
     </div>
@@ -439,7 +430,7 @@
       
         <div class="post-tags">
           
-            <a href="/tags/activity/" rel="tag"># activity</a>
+            <a href="/tags/Tweaks/" rel="tag"># Tweaks</a>
           
         </div>
       
@@ -452,8 +443,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/01/22/序列化机制/" rel="next" title="序列化机制">
-                <i class="fa fa-chevron-left"></i> 序列化机制
+              <a href="/2018/11/25/保活机制/" rel="next" title="保活机制总结">
+                <i class="fa fa-chevron-left"></i> 保活机制总结
               </a>
             
           </div>
@@ -461,10 +452,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/12/01/Android IPC机制-牛刀小试-[IPC基础知识]/" rel="prev" title="Android IPC机制-牛刀小试-[IPC基础知识]">
-                Android IPC机制-牛刀小试-[IPC基础知识] <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -647,7 +634,7 @@ var jiathis_config={
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#相对两个Activity"><span class="nav-number">1.</span> <span class="nav-text">相对两个Activity</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#对于多个Activity"><span class="nav-number">2.</span> <span class="nav-text">对于多个Activity</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ActivityManager"><span class="nav-number">2.1.</span> <span class="nav-text">ActivityManager</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#AndroidTweaks"><span class="nav-number">1.</span> <span class="nav-text">AndroidTweaks</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#How-to-use"><span class="nav-number">1.1.</span> <span class="nav-text">How to use</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#App"><span class="nav-number">1.1.1.</span> <span class="nav-text">App</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#object-继承-TweakLibrary"><span class="nav-number">1.1.2.</span> <span class="nav-text">object 继承 TweakLibrary</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#获取值"><span class="nav-number">1.1.3.</span> <span class="nav-text">获取值</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#启动Tweak程序"><span class="nav-number">1.1.4.</span> <span class="nav-text">启动Tweak程序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Issue-or-Pull-requests"><span class="nav-number">1.2.</span> <span class="nav-text">Issue or Pull requests</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#感谢"><span class="nav-number">1.3.</span> <span class="nav-text">感谢</span></a></li></ol></li></ol></div>
             
 
           </div>
